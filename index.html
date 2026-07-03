@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>早安海报</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ========== 页面主体 ========== -->
+    <main class="app-container">
+
+        <!-- 顶部工具栏 -->
+        <header class="toolbar top-toolbar">
+            <button class="btn btn-sm" id="btnChangeImage" title="换背景图">
+                🖼️ 换背景
+            </button>
+            <span class="toolbar-divider">|</span>
+            <button class="btn btn-sm" id="btnUploadImage" title="上传图片">
+                📤 上传
+            </button>
+            <span class="toolbar-divider">|</span>
+            <button class="btn btn-sm" id="btnTemplate" title="切换模板">
+                🎨 换模板
+            </button>
+            <span class="toolbar-divider">|</span>
+            <button class="btn btn-sm" id="btnSwitchBlessing" title="换一句祝福语">
+                💬 换一句
+            </button>
+        </header>
+
+        <!-- 海报区域 -->
+        <div class="poster-wrapper" id="posterWrapper">
+            <div class="poster" id="poster">
+
+                <!-- 图片区（上方） -->
+                <div class="poster-image-zone">
+                    <img class="poster-image" id="posterImage" src="" alt="背景图"
+                         onerror="console.warn('图片加载失败:', this.src);">
+                    <!-- 图片底部渐变过渡 -->
+                    <div class="poster-image-fade"></div>
+                </div>
+
+                <!-- 信息区（下方） -->
+                <div class="poster-info-zone">
+                    <div class="poster-content">
+
+                        <!-- 天气 -->
+                        <div class="poster-weather" id="posterWeather">
+                            <span class="weather-icon" id="weatherIcon">☀️</span>
+                            <span class="weather-text" id="weatherText">晴 18°C</span>
+                        </div>
+
+                        <!-- 日期 -->
+                        <div class="poster-date" id="posterDate">
+                            2026年7月3日 星期五
+                        </div>
+
+                        <!-- 早安大字 -->
+                        <div class="poster-morning">
+                            <span class="morning-text">早 安</span>
+                        </div>
+
+                        <!-- 祝福语 -->
+                        <div class="poster-blessing" id="posterBlessing">
+                            <p class="blessing-text" id="blessingText">愿你今天心情如阳光般灿烂！</p>
+                        </div>
+
+                    </div><!-- /poster-content -->
+
+                    <!-- 作者署名 -->
+                    <div class="poster-author">
+                        <img
+                            class="author-avatar"
+                            id="authorAvatar"
+                            src="assets/laowang.jpg"
+                            alt="头像"
+                            onerror="this.style.display='none'"
+                        >
+                        <span class="author-name" id="authorName">玲珑</span>
+                    </div>
+                </div><!-- /poster-info-zone -->
+
+            </div><!-- /poster -->
+        </div><!-- /poster-wrapper -->
+
+        <!-- 底部操作栏 -->
+        <footer class="toolbar bottom-toolbar">
+            <button class="btn btn-primary" id="btnSave">
+                💾 保存图片
+            </button>
+            <button class="btn btn-primary" id="btnShare">
+                📤 分享
+            </button>
+        </footer>
+
+        <!-- 隐藏的文件上传 input -->
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+    </main>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 模板选择弹窗 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalTemplate">
+            <h3 class="modal-title">选择海报模板</h3>
+            <div class="template-list" id="templateList"></div>
+            <button class="btn btn-block btn-primary" id="btnCloseModal">关闭</button>
+        </div>
+    </div>
+
+    <!-- ========== 业务 JS ========== -->
+    <script src="js/blessings.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/share.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

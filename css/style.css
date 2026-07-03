@@ -1,0 +1,443 @@
+/* ============================================================
+   早安海报 — 样式表
+   布局：图片区(上 45%) + 信息区(下 55%) | 3 套模板
+   使用 padding-bottom 撑高 + 绝对定位（兼容性最好）
+   ============================================================ */
+
+/* ---------- CSS 变量 ---------- */
+:root {
+    --gold:        #D4A843;
+    --gold-light:  #F0D68A;
+    --warm-white:  #FFF8EC;
+    --warm-bg:     #FBF6EE;
+    --ink:         #2C2416;
+    --ink-light:   #6B5E4A;
+
+    --radius:      16px;
+    --font-base:   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    --font-song:   "Noto Serif SC", "STSong", "SimSun", "Songti SC", serif;
+    --font-kai:    "STKaiti", "KaiTi", "Kaiti SC", serif;
+}
+
+/* ---------- 全局 ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: var(--font-base);
+    background: #F0EBE3;
+    color: var(--ink);
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px 0 24px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+}
+
+/* ---------- 工具栏 ---------- */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.top-toolbar    { padding: 8px 0; }
+.bottom-toolbar { padding: 4px 0 16px; }
+.toolbar-divider { color: #ccc; font-size: 14px; }
+
+/* ---------- 按钮 ---------- */
+.btn {
+    font-family: var(--font-base);
+    font-size: 15px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 24px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.btn:active { transform: scale(0.96); background: #f0e8d8; }
+.btn-sm { font-size: 14px; padding: 8px 14px; }
+.btn-primary {
+    background: var(--gold);
+    color: #fff;
+    font-weight: 600;
+    font-size: 17px;
+    padding: 12px 28px;
+    box-shadow: 0 4px 14px rgba(212,168,67,0.35);
+}
+.btn-primary:active { background: #c09536; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ============================================================
+   海报外层 — padding-bottom 撑高（比 aspect-ratio 兼容性更好）
+   ============================================================ */
+.poster-wrapper {
+    width: 100%;
+    max-width: 375px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    position: relative;
+    padding-bottom: 133.33%;     /* 3:4 */
+    height: 0;
+}
+
+.poster {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--warm-bg);
+}
+
+/* ============================================================
+   图片区（上方 45%）
+   ============================================================ */
+.poster-image-zone {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 45%;
+    overflow: hidden;
+    /* 兜底渐变：图片加载前/失败时 */
+    background: linear-gradient(135deg, #D5C4A1 0%, #C4B08A 50%, #A89878 100%);
+}
+
+.poster-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 图片底部渐变过渡 */
+.poster-image-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--warm-bg));
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ============================================================
+   信息区（下方 55%）
+   ============================================================ */
+.poster-info-zone {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--warm-bg);
+}
+
+.poster-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0 24px;
+}
+
+/* ---------- 天气 ---------- */
+.poster-weather {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+}
+.weather-icon { font-size: 22px; line-height: 1; }
+.weather-text { font-weight: 500; }
+
+/* ---------- 日期 ---------- */
+.poster-date {
+    font-size: 15px;
+    color: var(--ink-light);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+/* ---------- 早安大字 ---------- */
+.poster-morning { margin-bottom: 10px; }
+.morning-text {
+    font-family: var(--font-song);
+    font-size: 62px;
+    font-weight: 700;
+    letter-spacing: 10px;
+    line-height: 1.15;
+    color: #8B6914;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* ---------- 祝福语 ---------- */
+.poster-blessing { text-align: center; margin-top: 4px; }
+.blessing-text {
+    font-family: var(--font-kai);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.8;
+    letter-spacing: 1px;
+    color: var(--ink);
+    max-width: 260px;
+}
+.blessing-switch {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: var(--font-base);
+    font-size: 13px;
+    color: var(--gold);
+    background: rgba(212,168,67,0.08);
+    border: 1px solid rgba(212,168,67,0.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+}
+.blessing-switch:active { background: rgba(212,168,67,0.2); }
+
+/* ---------- 作者署名 ---------- */
+.poster-author {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.author-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: #eee;
+}
+.author-name {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--ink-light);
+}
+
+
+/* ============================================================
+   模板 B — 卡片式（信息区向上浮起，覆盖图片底部）
+   ============================================================ */
+.poster.template-b .poster-image-zone {
+    height: 50%;
+}
+.poster.template-b .poster-image-fade {
+    height: 0;
+}
+.poster.template-b .poster-info-zone {
+    top: 46%;
+    bottom: 0;
+    height: auto;
+    background: #fff;
+    border-radius: 18px 18px 0 0;
+    z-index: 3;
+    padding-top: 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.poster.template-b .poster-image {
+    border-radius: 0 0 12px 12px;
+}
+.poster.template-b .morning-text { font-size: 56px; }
+.poster.template-b .blessing-text { font-size: 19px; }
+
+
+/* ============================================================
+   模板 C — 杂志风（图片全屏 + 文字叠在图上）
+   ============================================================ */
+.poster.template-c .poster-image-zone {
+    top: 0; bottom: 0;
+    height: auto;
+    z-index: 0;
+}
+.poster.template-c .poster-image-fade {
+    top: 0; bottom: 0;
+    height: auto;
+    background: linear-gradient(
+        175deg,
+        rgba(0,0,0,0.05) 0%,
+        rgba(0,0,0,0.15) 35%,
+        rgba(0,0,0,0.50) 65%,
+        rgba(0,0,0,0.70) 100%
+    );
+}
+.poster.template-c .poster-info-zone {
+    top: 0; bottom: 0;
+    height: auto;
+    z-index: 2;
+    background: transparent;
+    justify-content: flex-end;
+    padding-bottom: 22px;
+}
+.poster.template-c .poster-weather,
+.poster.template-c .poster-date {
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.poster.template-c .morning-text {
+    color: #F0D68A;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.poster.template-c .blessing-text {
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+.poster.template-c .blessing-switch {
+    color: rgba(255,255,255,0.78);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+}
+.poster.template-c .author-name {
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.poster.template-c .author-avatar {
+    border-color: rgba(255,255,255,0.6);
+}
+
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(0,0,0,0.78);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   弹窗 / 模板选择
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+.modal {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 32px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal { transform: translateY(0); }
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 18px;
+    color: var(--ink);
+}
+
+.template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.template-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 2px solid #eee;
+    background: #fafafa;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font-base);
+    font-size: 15px;
+}
+.template-option:active { background: #f0e8d8; }
+.template-option.active {
+    border-color: var(--gold);
+    background: #FFF8EC;
+}
+.template-option .tpl-icon    { font-size: 28px; line-height: 1; }
+.template-option .tpl-info    { flex: 1; }
+.template-option .tpl-name    { font-weight: 600; font-size: 16px; color: var(--ink); }
+.template-option .tpl-desc    { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
+.template-option .tpl-check   { font-size: 20px; color: var(--gold); opacity: 0; }
+.template-option.active .tpl-check { opacity: 1; }
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 374px) {
+    .poster-wrapper {
+        border-radius: 0;
+        padding-bottom: 150%;  /* 稍高一点适配小屏 */
+    }
+    .morning-text { font-size: 50px; letter-spacing: 6px; }
+    .blessing-text { font-size: 18px; }
+    .poster.template-c .morning-text { font-size: 50px; }
+}
+
+@media (min-width: 600px) {
+    body { align-items: center; padding: 24px 0 40px; }
+    .poster-wrapper { border-radius: 20px; max-width: 400px; }
+    .btn { font-size: 16px; }
+    .morning-text { font-size: 68px; }
+}
