@@ -165,17 +165,20 @@
                 if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
             };
 
+            // 兜底：最多等 5 秒，不管预加载结果如何都恢复全透明
+            const fallbackTimer = setTimeout(clearLoading, 5000);
+
             if (url.startsWith('http')) {
                 this._preloadImage(url).then(ok => {
-                    // 确认仍是同一张图片才更新状态
+                    clearTimeout(fallbackTimer);
                     if (dom.posterImage.style.backgroundImage.includes(safeUrl)) {
                         clearLoading();
                         if (!ok) console.warn('图片加载失败，使用兜底渐变:', safeUrl);
                     }
                 });
             } else {
-                // data URL — 一般会立即加载，设个短超时清理 loading
-                setTimeout(clearLoading, 300);
+                // data URL — 短超时
+                setTimeout(() => { clearTimeout(fallbackTimer); clearLoading(); }, 300);
             }
         },
 
