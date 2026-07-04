@@ -1,80 +1,74 @@
 /* ============================================================
-   字体预设管理器 — 6 套手写/书法风格
-   Google Fonts 免费中文字体 + 系统楷体兜底
+   字体预设管理器 — 6 套纯系统字体
+   宋体·楷体·黑体各有鲜明个性，无需加载任何 web font
    每天自动轮换，也可手动切换
    ============================================================ */
 
 const FONT_PRESETS = [
     {
         id: 'song',
-        name: '马山正',
-        desc: '日常手写，亲切自然',
-        // Ma Shan Zheng — Google Fonts; KaiTi — 系统兜底
-        morning: '"Ma Shan Zheng", "STKaiti", "KaiTi", "Kaiti SC", cursive',
-        blessing: '"STKaiti", "KaiTi", "Kaiti SC", "DFKai-SB", serif',
-        morningWeight: '400',
-        morningSpacing: '4px',
+        name: '宋韵',
+        desc: '宋体大字，古朴典雅',
+        morning: '"STSong", "SimSun", "Songti SC", "Noto Serif SC", serif',
+        blessing: '"STKaiti", "KaiTi", "Kaiti SC", serif',
+        morningWeight: '700',
+        morningSpacing: '10px',
         blessingSize: '20px',
         blessingWeight: '400',
     },
     {
         id: 'kai',
-        name: '毛草',
-        desc: '狂草书法，气韵生动',
-        // Liu Jian Mao Cao — 草书风格
-        morning: '"Liu Jian Mao Cao", "STKaiti", "KaiTi", "Kaiti SC", cursive',
-        blessing: '"STKaiti", "KaiTi", "Kaiti SC", "DFKai-SB", serif',
-        morningWeight: '400',
-        morningSpacing: '2px',
+        name: '楷风',
+        desc: '楷体大字，温润亲切',
+        morning: '"STKaiti", "KaiTi", "Kaiti SC", serif',
+        blessing: '"STSong", "SimSun", "Songti SC", serif',
+        morningWeight: '600',
+        morningSpacing: '6px',
         blessingSize: '20px',
         blessingWeight: '400',
     },
     {
         id: 'modern',
-        name: '黄油体',
-        desc: '艺术字，活泼有趣',
-        // ZCOOL QingKe HuangYou — 站酷庆科黄油体
-        morning: '"ZCOOL QingKe HuangYou", "STKaiti", "KaiTi", "Kaiti SC", cursive',
+        name: '清黑',
+        desc: '细黑体，简约时尚',
+        morning: '"PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Heiti SC", "SimHei", sans-serif',
         blessing: '"STKaiti", "KaiTi", "Kaiti SC", serif',
-        morningWeight: '400',
-        morningSpacing: '4px',
+        morningWeight: '300',
+        morningSpacing: '12px',
         blessingSize: '19px',
         blessingWeight: '400',
     },
     {
         id: 'classic',
-        name: '龙藏',
-        desc: '随性手写，禅意十足',
-        // Long Cang — 龙藏体
-        morning: '"Long Cang", "STKaiti", "KaiTi", "Kaiti SC", cursive',
-        blessing: '"Noto Serif SC", "STSong", "SimSun", "Songti SC", serif',
-        morningWeight: '400',
-        morningSpacing: '2px',
-        blessingSize: '20px',
-        blessingWeight: '400',
+        name: '浑黑',
+        desc: '粗黑体，沉稳有力',
+        morning: '"PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Heiti SC", "SimHei", sans-serif',
+        blessing: '"STSong", "SimSun", "Songti SC", serif',
+        morningWeight: '700',
+        morningSpacing: '4px',
+        blessingSize: '18px',
+        blessingWeight: '300',
     },
     {
         id: 'warm',
-        name: '志莽行',
-        desc: '行书飘逸，洒脱大气',
-        // Zhi Mang Xing — 志莽行书
-        morning: '"Zhi Mang Xing", "STKaiti", "KaiTi", "Kaiti SC", cursive',
-        blessing: '"STKaiti", "KaiTi", "Kaiti SC", serif',
+        name: '宋墨',
+        desc: '细宋体，清雅脱俗',
+        morning: '"STSong", "SimSun", "Songti SC", "Noto Serif SC", serif',
+        blessing: '"PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif',
         morningWeight: '400',
-        morningSpacing: '2px',
-        blessingSize: '20px',
-        blessingWeight: '400',
+        morningSpacing: '14px',
+        blessingSize: '18px',
+        blessingWeight: '300',
     },
     {
         id: 'elegant',
-        name: '楷体',
-        desc: '系统楷体，经典永不过时',
-        // 纯系统字体，无需加载，永远可用的兜底
-        morning: '"STKaiti", "KaiTi", "Kaiti SC", "DFKai-SB", serif',
-        blessing: '"STKaiti", "KaiTi", "Kaiti SC", "DFKai-SB", serif',
+        name: '楷墨',
+        desc: '楷体配黑体，刚柔并济',
+        morning: '"STKaiti", "KaiTi", "Kaiti SC", serif',
+        blessing: '"PingFang SC", "Microsoft YaHei", "Heiti SC", "SimHei", sans-serif',
         morningWeight: '400',
-        morningSpacing: '4px',
-        blessingSize: '20px',
+        morningSpacing: '8px',
+        blessingSize: '19px',
         blessingWeight: '400',
     },
 ];
@@ -82,7 +76,6 @@ const FONT_PRESETS = [
 const FontManager = {
     _storageKey: 'zaoan_font_preset',
 
-    /** 获取当天字体预设（日期哈希决定，每天自动换） */
     getPreset() {
         const id = this.getCurrentId();
         return FONT_PRESETS.find(p => p.id === id) || FONT_PRESETS[0];
@@ -96,7 +89,6 @@ const FontManager = {
         return this._getDailyId();
     },
 
-    /** 手动切换到下一个字体预设 */
     switchToNext() {
         const currentId = this.getCurrentId();
         const idx = FONT_PRESETS.findIndex(p => p.id === currentId);
@@ -105,39 +97,33 @@ const FontManager = {
         return next;
     },
 
-    /** 手动切换到指定字体 */
     switchTo(id) {
         if (!FONT_PRESETS.some(p => p.id === id)) return null;
         this._save(id);
         return this.getPreset();
     },
 
-    /** 应用当前字体预设到海报 DOM */
     apply() {
         const preset = this.getPreset();
         const poster = document.getElementById('poster');
         if (!poster) return preset;
 
-        // 移除旧字体 class
         FONT_PRESETS.forEach(p => poster.classList.remove('font-' + p.id));
-        // 添加当前字体 class
         poster.classList.add('font-' + preset.id);
 
-        // 动态设置 CSS 变量（覆盖预设值）
-        const style = poster.style;
-        style.setProperty('--font-morning', preset.morning);
-        style.setProperty('--font-blessing', preset.blessing);
-        style.setProperty('--morning-weight', preset.morningWeight);
-        style.setProperty('--morning-spacing', preset.morningSpacing);
-        style.setProperty('--blessing-size', preset.blessingSize);
-        style.setProperty('--blessing-weight', preset.blessingWeight);
+        const s = poster.style;
+        s.setProperty('--font-morning', preset.morning);
+        s.setProperty('--font-blessing', preset.blessing);
+        s.setProperty('--morning-weight', preset.morningWeight);
+        s.setProperty('--morning-spacing', preset.morningSpacing);
+        s.setProperty('--blessing-size', preset.blessingSize);
+        s.setProperty('--blessing-weight', preset.blessingWeight);
 
         return preset;
     },
 
     getAll() { return FONT_PRESETS; },
 
-    /* -------- 内部 -------- */
     _getDailyId() {
         const d = new Date();
         const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
