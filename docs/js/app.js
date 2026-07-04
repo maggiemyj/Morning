@@ -144,42 +144,13 @@
         /* -------- 内部 -------- */
 
         /**
-         * 设置海报图片
-         * 使用 background-image（而非 img src），
-         * html2canvas 对 background-size:cover 的渲染比 object-fit 更可靠，
-         * 避免导出时图片拉伸变形
+         * 设置海报图片 — <img> 标签，简单可靠
          */
         _setImage(url) {
             if (!dom.posterImage) return;
-            // 显示 loading 状态
             dom.posterImage.classList.add('loading');
             if (dom.posterImgLoading) dom.posterImgLoading.classList.add('show');
-
-            // 用 background-image 方式设置图片
-            const safeUrl = url.replace(/['"\(\)]/g, '');
-            dom.posterImage.style.backgroundImage = `url("${safeUrl}")`;
-
-            // 预加载跟踪：加载成功/失败后清除 loading 状态
-            const clearLoading = () => {
-                dom.posterImage.classList.remove('loading');
-                if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
-            };
-
-            // 兜底：最多等 5 秒，不管预加载结果如何都恢复全透明
-            const fallbackTimer = setTimeout(clearLoading, 5000);
-
-            if (url.startsWith('http')) {
-                this._preloadImage(url).then(ok => {
-                    clearTimeout(fallbackTimer);
-                    if (dom.posterImage.style.backgroundImage.includes(safeUrl)) {
-                        clearLoading();
-                        if (!ok) console.warn('图片加载失败，使用兜底渐变:', safeUrl);
-                    }
-                });
-            } else {
-                // data URL — 短超时
-                setTimeout(() => { clearTimeout(fallbackTimer); clearLoading(); }, 300);
-            }
+            dom.posterImage.src = url;
         },
 
         /** 预加载图片，返回是否成功 */
@@ -381,11 +352,21 @@
             if (file) { ImageManager.uploadImage(file); dom.fileInput.value = ''; }
         });
 
-        // 图片加载/错误事件（background-image 方式不再需要 onload/onerror，
-        // 但保留 loading 状态的清除）
+        // 图片加载/错误事件
         if (dom.posterImage) {
-            // 监听背景图的实际加载（通过定时检查或 CSS transitionend）
-            // 这里用一个简单的 MutationObserver 或直接在 _setImage 中管理
+            const done = () => {
+                dom.posterImage.classList.remove('loading');
+                if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
+            };
+            dom.posterImage.addEventListener('load', done);
+            dom.posterImage.addEventListener('error', done);
+            // 兜底：5 秒后无论如何清除 loading
+            const fallback = setInterval(() => {
+                if (dom.posterImage.classList.contains('loading')) {
+                    done();
+                    clearInterval(fallback);
+                }
+            }, 5000);
         }
 
         // 模板
