@@ -475,142 +475,113 @@ body {
 
 
 /* ============================================================
-   模板 D — 竖排诗意（图片居中 + 上下留白 + 早安竖排左侧）
+   模板 D — 竖排诗意
+   暖色背景 · 图片居中带圆角 · 天气日期顶部优雅排布 · 早安竖排
    ============================================================ */
-.poster.template-d { background: #fff; }
+.poster.template-d {
+    background: #F4EFE6;
+}
+
+/* --- 图片居中，留左右边距，加圆角和微阴影 --- */
 .poster.template-d .poster-image-zone {
-    top: 16%;
-    bottom: 36%;
+    top: 20%;
+    left: 6%;
+    right: 6%;
+    bottom: 34%;
     height: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 16px rgba(0,0,0,0.07);
 }
 .poster.template-d .poster-image-zone::after {
     display: none;
 }
+
+/* --- 信息区覆盖全海报 --- */
 .poster.template-d .poster-info-zone {
     top: 0; bottom: 0;
     height: auto;
     background: transparent;
     justify-content: flex-start;
 }
-/* 天气 / 日期 → 顶部居中 */
+
+/* --- 天气：顶部小标签风 --- */
 .poster.template-d .poster-weather {
     position: absolute;
-    top: 6%;
+    top: 7%;
     left: 0; right: 0;
     text-align: center;
-    color: var(--ink-light);
+    color: #8A7A65;
+    font-size: 14px;
+    letter-spacing: 0.5px;
     margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
+.poster.template-d .weather-icon {
+    font-size: 18px;
+}
+
+/* --- 日期：优雅居中 --- */
 .poster.template-d .poster-date {
     position: absolute;
-    top: 11%;
+    top: 13%;
     left: 0; right: 0;
     text-align: center;
-    color: var(--ink-lighter);
+    color: #A89880;
+    font-size: 13px;
+    letter-spacing: 2px;
     margin-bottom: 0;
-    font-size: 14px;
 }
-/* 早安 → 左下竖排 */
+
+/* --- 早安：左下竖排，深色醒目 --- */
 .poster.template-d .poster-morning {
     position: absolute;
-    left: 10%;
-    bottom: 14%;
+    left: 12%;
+    bottom: 8%;
     writing-mode: vertical-rl;
     margin-bottom: 0;
 }
 .poster.template-d .morning-text {
-    font-size: 46px;
-    letter-spacing: 10px;
-    color: #6B5E4A;
+    font-size: 44px;
+    letter-spacing: 12px;
+    color: #4A3828;
     text-shadow: none;
+    line-height: 1.0;
 }
-/* 祝福语 → 右下横排 */
+
+/* --- 祝福语：右下横排，与早安形成纵横对比 --- */
 .poster.template-d .poster-blessing {
     position: absolute;
-    left: 30%;
-    right: 8%;
-    bottom: 12%;
+    left: 32%;
+    right: 12%;
+    bottom: 10%;
     text-align: left;
     margin-top: 0;
 }
 .poster.template-d .blessing-text {
     max-width: 100%;
-    font-size: 19px;
-    line-height: 2.0;
-}
-.poster.template-d .poster-author { bottom: 16px; right: 16px; }
-
-
-/* ============================================================
-   模板 E — 线条韵律（暖色背景 + 金线点缀）
-   ============================================================ */
-.poster.template-e {
-    background: #EDE4D8;
-}
-.poster.template-e .poster-image-zone {
-    height: 42%;
-    /* 底部金线分割 */
-    border-bottom: 1px solid var(--gold);
-}
-.poster.template-e .poster-image-zone::after {
-    display: none;
-}
-.poster.template-e .poster-info-zone {
-    top: 42%;
-    bottom: 0;
-    background: #EDE4D8;
-    justify-content: flex-start;
-    padding-top: 24px;
-}
-/* 天气上方细线 */
-.poster.template-e .poster-weather {
-    color: var(--ink-lighter);
-    margin-bottom: 4px;
-}
-.poster.template-e .poster-date {
-    color: var(--ink-lighter);
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-/* 早安下方短金线 */
-.poster.template-e .poster-morning {
-    margin-bottom: 4px;
-    position: relative;
-}
-.poster.template-e .morning-text {
-    font-size: 54px;
-    letter-spacing: 6px;
-    color: #4A3828;
-    text-shadow: none;
-}
-/* 金线装饰 — 用 morning 下方伪元素 */
-.poster.template-e .poster-morning::after {
-    content: '';
-    display: block;
-    width: 36px;
-    height: 2px;
-    background: var(--gold);
-    margin: 6px auto 0;
-    border-radius: 1px;
-}
-/* 祝福语 */
-.poster.template-e .blessing-text {
     font-size: 18px;
-    color: #6B5E4A;
     line-height: 2.0;
-    margin-top: 12px;
+    color: #5C4A38;
 }
-/* 祝福语下方装饰线 */
-.poster.template-e .poster-blessing::after {
-    content: '';
-    display: block;
-    width: 50px;
-    height: 1px;
-    background: #D5CBB8;
-    margin: 12px auto 0;
+
+/* --- 作者 --- */
+.poster.template-d .poster-author {
+    bottom: 14px;
+    right: 16px;
 }
-.poster.template-e .poster-author { bottom: 18px; }
-.poster.template-e .author-name { color: #8A7A65; }
+.poster.template-d .author-name {
+    color: #8A7A65;
+}
+
+/* ---- 响应式微调 ---- */
+@media (max-width: 374px) {
+    .poster.template-d .morning-text { font-size: 38px; letter-spacing: 10px; }
+    .poster.template-d .blessing-text { font-size: 16px; line-height: 1.9; }
+}
 
 
 /* ============================================================

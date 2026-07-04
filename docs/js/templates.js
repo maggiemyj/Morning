@@ -28,16 +28,9 @@ const TEMPLATES = [
     {
         id: 'd',
         name: '竖排诗意',
-        desc: '图片居中，早安竖排',
+        desc: '居中画框，竖排早安',
         icon: '📜',
         className: 'template-d',
-    },
-    {
-        id: 'e',
-        name: '线条韵律',
-        desc: '暖色背景，金线点缀',
-        icon: '✨',
-        className: 'template-e',
     },
 ];
 
