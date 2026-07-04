@@ -8,27 +8,35 @@
     const $ = (sel) => document.querySelector(sel);
 
     const dom = {
-        posterImage:     $('#posterImage'),
-        weatherIcon:     $('#weatherIcon'),
-        weatherText:     $('#weatherText'),
-        posterDate:      $('#posterDate'),
-        blessingText:    $('#blessingText'),
-        authorAvatar:    $('#authorAvatar'),
-        authorName:      $('#authorName'),
-        btnChangeImage:  $('#btnChangeImage'),
-        btnUploadImage:  $('#btnUploadImage'),
-        btnTemplate:     $('#btnTemplate'),
-        btnSave:         $('#btnSave'),
-        btnShare:        $('#btnShare'),
-        btnSwitchBless:  $('#btnSwitchBlessing'),
-        fileInput:       $('#fileInput'),
-        modalOverlay:    $('#modalOverlay'),
-        templateList:    $('#templateList'),
-        btnCloseModal:   $('#btnCloseModal'),
+        posterImage:      $('#posterImage'),
+        posterImgLoading: $('#posterImageLoading'),
+        weatherIcon:      $('#weatherIcon'),
+        weatherText:      $('#weatherText'),
+        posterDate:       $('#posterDate'),
+        blessingText:     $('#blessingText'),
+        blessingEdit:     $('#blessingEdit'),
+        blessingActions:  $('#blessingEditActions'),
+        posterBlessing:   $('#posterBlessing'),
+        authorAvatar:     $('#authorAvatar'),
+        authorName:       $('#authorName'),
+        btnChangeImage:   $('#btnChangeImage'),
+        btnUploadImage:   $('#btnUploadImage'),
+        btnSwitchFont:    $('#btnSwitchFont'),
+        btnTemplate:      $('#btnTemplate'),
+        btnSave:          $('#btnSave'),
+        btnShare:         $('#btnShare'),
+        btnSwitchBless:   $('#btnSwitchBlessing'),
+        btnEditSave:      $('#btnEditSave'),
+        btnEditCancel:    $('#btnEditCancel'),
+        btnEditReset:     $('#btnEditReset'),
+        fileInput:        $('#fileInput'),
+        modalOverlay:     $('#modalOverlay'),
+        templateList:     $('#templateList'),
+        btnCloseModal:    $('#btnCloseModal'),
     };
 
     // ==================== 图片管理 ====================
-    // 20 张 Unsplash 精选自然风景（800px 宽，~50KB/张，无 CORS 限制）
+    // 20 张 Unsplash 精选自然风景（800px 宽）
     const UNSPLASH_POOL = (function () {
         const ids = [
             '1507525428034-b723cf961d3e',  // 海滩
@@ -60,17 +68,15 @@
     const ImageManager = {
         _bgStorageKey: 'zaoan_bg_image',
         _uploadStorageKey: 'zaoan_uploaded_bg',
-        _poolIndexKey: 'zaoan_img_pool_index',
+        _failedUrls: [],
 
         async loadBackground() {
-            // 1. 用户上传的图片优先
             const uploaded = this._getUploaded();
             if (uploaded) {
                 this._setImage(uploaded);
                 return;
             }
 
-            // 2. 用日期决定今天用哪张图（同一天同一张，每天不同）
             const todayIdx = this._getTodayPoolIndex();
             const url = UNSPLASH_POOL[todayIdx];
             this._setImage(url);
@@ -78,19 +84,45 @@
         },
 
         async changeBingImage() {
-            Toast.show('正在换图...');
-            // 从池子里随机选一张不同的
-            let idx;
-            do {
-                idx = Math.floor(Math.random() * UNSPLASH_POOL.length);
-            } while (idx === this._getCachedIndex() && UNSPLASH_POOL.length > 1);
+            Toast.show('正在换图…');
 
-            const url = UNSPLASH_POOL[idx];
-            this._setImage(url);
-            // 更新当天的图（不改变日期逻辑，只改当前显示）
-            this._saveCache({ url, index: idx, date: this._todayKey() });
-            this._clearUploaded();
-            Toast.show('✅ 背景已更新');
+            const available = UNSPLASH_POOL
+                .map((url, i) => ({ url, i }))
+                .filter(item => !this._failedUrls.includes(item.url));
+
+            if (available.length === 0) {
+                this._failedUrls = [];
+                Toast.show('正在重新尝试…');
+                return this.changeBingImage();
+            }
+
+            const cachedIdx = this._getCachedIndex();
+            let pick;
+            if (available.length === 1) {
+                pick = available[0];
+            } else {
+                do {
+                    pick = available[Math.floor(Math.random() * available.length)];
+                } while (pick.i === cachedIdx && available.length > 1);
+            }
+
+            // 预加载 → 成功再设置
+            const loaded = await this._preloadImage(pick.url);
+            if (loaded) {
+                this._setImage(pick.url);
+                this._saveCache({ url: pick.url, index: pick.i, date: this._todayKey() });
+                this._clearUploaded();
+                Toast.show('✅ 背景已更新');
+            } else {
+                this._failedUrls.push(pick.url);
+                if (this._failedUrls.length < UNSPLASH_POOL.length) {
+                    Toast.show('这张加载失败，换一张…');
+                    await this.changeBingImage();
+                } else {
+                    Toast.show('图片加载失败，请稍后重试');
+                    this._failedUrls = [];
+                }
+            }
         },
 
         uploadImage(file) {
@@ -111,8 +143,61 @@
 
         /* -------- 内部 -------- */
 
+        /**
+         * 设置海报图片
+         * 使用 background-image（而非 img src），
+         * html2canvas 对 background-size:cover 的渲染比 object-fit 更可靠，
+         * 避免导出时图片拉伸变形
+         */
         _setImage(url) {
-            if (dom.posterImage) dom.posterImage.src = url;
+            if (!dom.posterImage) return;
+            // 显示 loading 状态
+            dom.posterImage.classList.add('loading');
+            if (dom.posterImgLoading) dom.posterImgLoading.classList.add('show');
+
+            // 用 background-image 方式设置图片
+            const safeUrl = url.replace(/['"\(\)]/g, '');
+            dom.posterImage.style.backgroundImage = `url("${safeUrl}")`;
+
+            // 预加载跟踪：加载成功/失败后清除 loading 状态
+            const clearLoading = () => {
+                dom.posterImage.classList.remove('loading');
+                if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
+            };
+
+            if (url.startsWith('http')) {
+                this._preloadImage(url).then(ok => {
+                    // 确认仍是同一张图片才更新状态
+                    if (dom.posterImage.style.backgroundImage.includes(safeUrl)) {
+                        clearLoading();
+                        if (!ok) console.warn('图片加载失败，使用兜底渐变:', safeUrl);
+                    }
+                });
+            } else {
+                // data URL — 一般会立即加载，设个短超时清理 loading
+                setTimeout(clearLoading, 300);
+            }
+        },
+
+        /** 预加载图片，返回是否成功 */
+        _preloadImage(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                const timeout = setTimeout(() => {
+                    img.src = '';
+                    resolve(false);
+                }, 12000);
+
+                img.onload = () => {
+                    clearTimeout(timeout);
+                    resolve(true);
+                };
+                img.onerror = () => {
+                    clearTimeout(timeout);
+                    resolve(false);
+                };
+                img.src = url;
+            });
         },
 
         _todayKey() {
@@ -121,7 +206,6 @@
         },
 
         _getTodayPoolIndex() {
-            // 用日期哈希决定索引，保证每天同一张、每天不同
             const key = this._todayKey();
             let hash = 0;
             for (let i = 0; i < key.length; i++) {
@@ -140,17 +224,6 @@
                 }
             } catch (_) {}
             return -1;
-        },
-
-        _getCached() {
-            try {
-                const raw = localStorage.getItem(this._bgStorageKey);
-                if (raw) {
-                    const d = JSON.parse(raw);
-                    if (d.date === this._todayKey()) return d;
-                }
-            } catch (_) {}
-            return null;
         },
 
         _saveCache(data) {
@@ -196,9 +269,49 @@
 
     // ==================== 祝福语 ====================
     function renderBlessing() {
-        if (dom.blessingText) {
-            dom.blessingText.textContent = BlessingManager.getCurrent();
+        if (!dom.blessingText) return;
+        const text = BlessingManager.getCurrent();
+        dom.blessingText.textContent = text;
+        if (BlessingManager.isCustom()) {
+            dom.blessingText.classList.add('custom');
+        } else {
+            dom.blessingText.classList.remove('custom');
         }
+    }
+
+    // ==================== 祝福语编辑 ====================
+    function enterEditMode() {
+        if (!dom.posterBlessing || !dom.blessingEdit) return;
+        dom.posterBlessing.classList.add('editing');
+        dom.blessingEdit.value = dom.blessingText.textContent;
+        setTimeout(() => dom.blessingEdit.focus(), 100);
+    }
+
+    function exitEditMode() {
+        if (!dom.posterBlessing) return;
+        dom.posterBlessing.classList.remove('editing');
+    }
+
+    function saveCustomBlessing() {
+        if (!dom.blessingEdit) return;
+        const text = dom.blessingEdit.value.trim();
+        if (!text) {
+            Toast.show('请输入祝福语');
+            return;
+        }
+        BlessingManager.setCustom(text);
+        dom.blessingText.textContent = text;
+        dom.blessingText.classList.add('custom');
+        exitEditMode();
+        Toast.show('祝福语已更新');
+    }
+
+    function resetBlessing() {
+        const text = BlessingManager.resetToSystem();
+        dom.blessingText.textContent = text;
+        dom.blessingText.classList.remove('custom');
+        exitEditMode();
+        Toast.show('已恢复系统祝福语');
     }
 
     // ==================== 模板弹窗 ====================
@@ -223,7 +336,7 @@
             el.addEventListener('click', () => {
                 TemplateManager.switchTo(el.dataset.templateId);
                 closeModal();
-                Toast.show(`已切换为「${TemplateManager.getCurrent().name}」模板`);
+                Toast.show(`已切换为「${TemplateManager.getCurrent().name}」`);
             });
         });
     }
@@ -238,41 +351,87 @@
         document.body.style.overflow = '';
     }
 
+    // ==================== 字体 ====================
+    function applyFont() {
+        FontManager.apply();
+    }
+
+    function switchFont() {
+        const preset = FontManager.switchToNext();
+        FontManager.apply();
+        Toast.show(`字体：${preset.name} · ${preset.desc}`);
+    }
+
     // ==================== 事件绑定 ====================
     function bindEvents() {
+        // 图片
         dom.btnChangeImage.addEventListener('click', () => ImageManager.changeBingImage());
         dom.btnUploadImage.addEventListener('click', () => dom.fileInput.click());
         dom.fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) { ImageManager.uploadImage(file); dom.fileInput.value = ''; }
         });
+
+        // 图片加载/错误事件（background-image 方式不再需要 onload/onerror，
+        // 但保留 loading 状态的清除）
+        if (dom.posterImage) {
+            // 监听背景图的实际加载（通过定时检查或 CSS transitionend）
+            // 这里用一个简单的 MutationObserver 或直接在 _setImage 中管理
+        }
+
+        // 模板
         dom.btnTemplate.addEventListener('click', openModal);
         dom.btnCloseModal.addEventListener('click', closeModal);
         dom.modalOverlay.addEventListener('click', (e) => {
             if (e.target === dom.modalOverlay) closeModal();
         });
+
+        // 字体切换
+        if (dom.btnSwitchFont) {
+            dom.btnSwitchFont.addEventListener('click', switchFont);
+        }
+
+        // 祝福语切换
         dom.btnSwitchBless.addEventListener('click', () => {
             dom.blessingText.textContent = BlessingManager.switchToNext();
-            Toast.show(`已换一句 (${BlessingManager.getCurrentPosition()}/${BlessingManager.getTotal()})`);
+            dom.blessingText.classList.remove('custom');
+            Toast.show('已换一句');
         });
-        dom.btnSave.addEventListener('click', () => ShareManager.saveAsImage());
-        dom.btnShare.addEventListener('click', () => ShareManager.share());
 
-        // 图片加载成功/失败诊断
-        if (dom.posterImage) {
-            dom.posterImage.addEventListener('load', () => {
-                console.log('✅ 海报图片加载成功');
-            });
-            dom.posterImage.addEventListener('error', () => {
-                console.warn('❌ 海报图片加载失败:', dom.posterImage.src);
-                // 图片加载失败，CSS 渐变兜底
+        // 祝福语编辑
+        if (dom.blessingText) {
+            dom.blessingText.addEventListener('click', enterEditMode);
+        }
+        if (dom.btnEditSave) {
+            dom.btnEditSave.addEventListener('click', saveCustomBlessing);
+        }
+        if (dom.btnEditCancel) {
+            dom.btnEditCancel.addEventListener('click', exitEditMode);
+        }
+        if (dom.btnEditReset) {
+            dom.btnEditReset.addEventListener('click', resetBlessing);
+        }
+        if (dom.blessingEdit) {
+            dom.blessingEdit.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    saveCustomBlessing();
+                }
+                if (e.key === 'Escape') {
+                    exitEditMode();
+                }
             });
         }
+
+        // 保存 & 分享
+        dom.btnSave.addEventListener('click', () => ShareManager.saveAsImage());
+        dom.btnShare.addEventListener('click', () => ShareManager.share());
     }
 
     // ==================== 初始化 ====================
     async function init() {
         TemplateManager.init();
+        applyFont();           // 应用当天字体预设
         renderDate();
         renderBlessing();
 
@@ -283,7 +442,9 @@
 
         buildTemplateModal();
         bindEvents();
-        console.log('☀️ 早安海报已就绪');
+
+        const fp = FontManager.getPreset();
+        console.log(`☀️ 早安海报已就绪 · 字体：${fp.name}`);
     }
 
     // ==================== 启动 ====================

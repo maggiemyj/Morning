@@ -6,6 +6,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>早安海报</title>
+
+    <!-- 手写体中文字体：Google Fonts 加载，系统楷体兜底 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Liu+Jian+Mao+Cao&family=ZCOOL+QingKe+HuangYou&family=Long+Cang&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,34 +19,25 @@
     <!-- ========== 页面主体 ========== -->
     <main class="app-container">
 
-        <!-- 顶部工具栏 -->
+        <!-- 顶部工具栏 — 一行排列 -->
         <header class="toolbar top-toolbar">
-            <button class="btn btn-sm" id="btnChangeImage" title="换背景图">
-                🖼️ 换背景
-            </button>
-            <span class="toolbar-divider">|</span>
-            <button class="btn btn-sm" id="btnUploadImage" title="上传图片">
-                📤 上传
-            </button>
-            <span class="toolbar-divider">|</span>
-            <button class="btn btn-sm" id="btnTemplate" title="切换模板">
-                🎨 换模板
-            </button>
-            <span class="toolbar-divider">|</span>
-            <button class="btn btn-sm" id="btnSwitchBlessing" title="换一句祝福语">
-                💬 换一句
-            </button>
+            <button class="btn-tool" id="btnChangeImage" title="换一张背景图">换图</button>
+            <button class="btn-tool" id="btnUploadImage" title="上传自定义图片">上传</button>
+            <button class="btn-tool" id="btnSwitchFont" title="换个字体风格">字体</button>
+            <button class="btn-tool" id="btnTemplate" title="切换海报模板">模板</button>
+            <button class="btn-tool" id="btnSwitchBlessing" title="换一句祝福语">换句</button>
         </header>
 
         <!-- 海报区域 -->
         <div class="poster-wrapper" id="posterWrapper">
             <div class="poster" id="poster">
 
-                <!-- 图片区（上方） -->
+                <!-- 图片区（上方）— 用 div + background-image，html2canvas 渲染更可靠 -->
                 <div class="poster-image-zone">
-                    <img class="poster-image" id="posterImage" src="" alt="背景图"
-                         onerror="console.warn('图片加载失败:', this.src);">
-                    <!-- 图片底部渐变过渡 -->
+                    <div class="poster-image" id="posterImage"></div>
+                    <!-- 图片加载中 -->
+                    <div class="poster-image-loading" id="posterImageLoading">加载中…</div>
+                    <!-- 图片底部渐变过渡（延伸到信息区上方消除接缝） -->
                     <div class="poster-image-fade"></div>
                 </div>
 
@@ -64,9 +61,18 @@
                             <span class="morning-text">早 安</span>
                         </div>
 
-                        <!-- 祝福语 -->
+                        <!-- 祝福语（可点击编辑） -->
                         <div class="poster-blessing" id="posterBlessing">
-                            <p class="blessing-text" id="blessingText">愿你今天心情如阳光般灿烂！</p>
+                            <p class="blessing-text" id="blessingText"
+                               title="点击编辑祝福语">愿你今天心情如阳光般灿烂！</p>
+                            <!-- 编辑模式 -->
+                            <textarea class="blessing-edit" id="blessingEdit"
+                                      placeholder="输入你的祝福语…" rows="2"></textarea>
+                            <div class="blessing-edit-actions" id="blessingEditActions">
+                                <button class="btn-edit-action btn-edit-save" id="btnEditSave">✓ 确定</button>
+                                <button class="btn-edit-action btn-edit-cancel" id="btnEditCancel">取消</button>
+                                <button class="btn-edit-action btn-edit-reset" id="btnEditReset">恢复系统</button>
+                            </div>
                         </div>
 
                     </div><!-- /poster-content -->
@@ -89,12 +95,8 @@
 
         <!-- 底部操作栏 -->
         <footer class="toolbar bottom-toolbar">
-            <button class="btn btn-primary" id="btnSave">
-                💾 保存图片
-            </button>
-            <button class="btn btn-primary" id="btnShare">
-                📤 分享
-            </button>
+            <button class="btn-action" id="btnSave">保存图片</button>
+            <button class="btn-action btn-action-primary" id="btnShare">分享</button>
         </footer>
 
         <!-- 隐藏的文件上传 input -->
@@ -117,6 +119,7 @@
     <!-- ========== 业务 JS ========== -->
     <script src="js/blessings.js"></script>
     <script src="js/weather.js"></script>
+    <script src="js/fonts.js"></script>
     <script src="js/templates.js"></script>
     <script src="js/share.js"></script>
     <script src="js/app.js"></script>
