@@ -61,7 +61,7 @@
             '1518837695005-208309761952',  // 海浪
         ];
         return ids.map(id =>
-            `https://images.unsplash.com/photo-${id}?w=800&h=600&fit=crop&auto=format`
+            `https://images.unsplash.com/photo-${id}?w=1200&h=900&fit=crop&auto=format`
         );
     })();
 

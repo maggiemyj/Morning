@@ -56,10 +56,11 @@ const ShareManager = {
 
         try {
             await this._loadHtml2canvas();
+            const scale = Math.max(3, window.devicePixelRatio || 2);
             const canvas = await html2canvas(posterEl, {
                 useCORS: true,
                 allowTaint: true,
-                scale: 2,
+                scale: scale,
                 backgroundColor: null,
                 logging: false,
             });
@@ -93,10 +94,11 @@ const ShareManager = {
 
         try {
             await this._loadHtml2canvas();
+            const scale = Math.max(3, window.devicePixelRatio || 2);
             const canvas = await html2canvas(posterEl, {
                 useCORS: true,
                 allowTaint: true,
-                scale: 2,
+                scale: scale,
                 backgroundColor: null,
                 logging: false,
             });
