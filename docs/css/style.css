@@ -1,0 +1,622 @@
+/* ============================================================
+   早安海报 — 样式表
+   布局：图片区(上 45%) + 信息区(下 55%) | 3 套模板 | 6 套字体
+   使用 padding-bottom 撑高 + 绝对定位（兼容性最好）
+   ============================================================ */
+
+/* ---------- CSS 变量 ---------- */
+:root {
+    --gold:        #C8A04A;
+    --gold-light:  #E8D5A3;
+    --gold-dark:   #9A7B32;
+    --warm-white:  #FFF8EC;
+    --warm-bg:     #FBF6EE;
+    --ink:         #2C2416;
+    --ink-light:   #6B5E4A;
+    --ink-lighter: #9A8E7A;
+
+    --radius:      16px;
+    --font-base:   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    --font-song:   "Noto Serif SC", "STSong", "SimSun", "Songti SC", serif;
+    --font-kai:    "STKaiti", "KaiTi", "Kaiti SC", serif;
+}
+
+/* ---------- 全局 ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: var(--font-base);
+    background: #F0EBE3;
+    color: var(--ink);
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px 0 24px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+}
+
+/* ============================================================
+   工具栏
+   ============================================================ */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+.top-toolbar    { padding: 8px 0 4px; flex-wrap: nowrap; }
+.bottom-toolbar { padding: 4px 0 16px; gap: 12px; }
+
+/* ---------- 高级感工具按钮（顶部） ---------- */
+.btn-tool {
+    font-family: var(--font-base);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border: 1px solid #D5CBB8;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.55);
+    color: var(--ink-light);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    position: relative;
+    overflow: hidden;
+}
+.btn-tool::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    background: linear-gradient(135deg, rgba(200,160,74,0.08), rgba(200,160,74,0.02));
+}
+.btn-tool:hover::after,
+.btn-tool:active::after { opacity: 1; }
+.btn-tool:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+}
+.btn-tool:active {
+    transform: scale(0.95);
+    background: rgba(200,160,74,0.12);
+}
+
+/* ---------- 底部操作按钮 ---------- */
+.btn-action {
+    font-family: var(--font-base);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 32px;
+    border: 1.5px solid #D5CBB8;
+    border-radius: 26px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.22s ease;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+}
+.btn-action:active {
+    transform: scale(0.97);
+    background: #f8f2e8;
+}
+.btn-action-primary {
+    background: linear-gradient(135deg, #C8A04A, #B8923E);
+    color: #fff;
+    border-color: transparent;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(200,160,74,0.3);
+}
+.btn-action-primary:active {
+    background: linear-gradient(135deg, #B08A38, #A07A2E);
+    box-shadow: 0 2px 8px rgba(200,160,74,0.2);
+}
+
+/* ---------- 旧按钮兼容（弹窗关闭用） ---------- */
+.btn {
+    font-family: var(--font-base);
+    font-size: 15px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 24px;
+    background: var(--gold);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+}
+.btn:active { transform: scale(0.96); background: #b08632; }
+.btn-block { width: 100%; display: block; text-align: center; }
+
+/* ============================================================
+   海报外层 — padding-bottom 撑高
+   ============================================================ */
+.poster-wrapper {
+    width: 100%;
+    max-width: 375px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    position: relative;
+    padding-bottom: 133.33%;     /* 3:4 */
+    height: 0;
+}
+
+.poster {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--warm-bg);
+}
+
+/* ============================================================
+   图片区（上方 45%）
+   — 用 div + background-image 代替 img 标签
+   — html2canvas 对 background-size:cover 的渲染比 object-fit 更可靠
+   ============================================================ */
+.poster-image-zone {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 45%;
+    overflow: hidden;
+    /* 兜底渐变：图片加载前/失败时 */
+    background: linear-gradient(135deg, #D5C4A1 0%, #C4B08A 50%, #A89878 100%);
+}
+
+.poster-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 0.4s ease;
+}
+.poster-image.loading { opacity: 0.3; }
+
+.poster-image-loading {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 3;
+}
+.poster-image-loading.show { opacity: 1; }
+
+/* 图片底部渐变过渡
+   — height 增加到 60px，确保平滑过渡
+   — 底部颜色与信息区背景精确一致 (#FBF6EE)，消除接缝 */
+.poster-image-fade {
+    position: absolute;
+    bottom: -1px;   /* 1px 重叠消除可能出现的细线 */
+    left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(251,246,238,0.3) 30%,
+        rgba(251,246,238,0.85) 70%,
+        #FBF6EE 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ============================================================
+   信息区（下方 55%）
+   — top 偏移量覆盖 2px 到图片区，彻底消除接缝线
+   ============================================================ */
+.poster-info-zone {
+    position: absolute;
+    top: calc(45% - 2px);  /* 2px 重叠，消除与图片区的渲染间隙 */
+    bottom: 0;
+    left: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FBF6EE;
+}
+
+.poster-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0 24px;
+}
+
+/* ---------- 天气 ---------- */
+.poster-weather {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+}
+.weather-icon { font-size: 22px; line-height: 1; }
+.weather-text { font-weight: 500; }
+
+/* ---------- 日期 ---------- */
+.poster-date {
+    font-size: 15px;
+    color: var(--ink-light);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+/* ---------- 早安大字 — 使用 CSS 变量让字体预设覆盖 ---------- */
+.poster-morning { margin-bottom: 10px; }
+.morning-text {
+    font-family: var(--font-morning, var(--font-song));
+    font-size: 62px;
+    font-weight: var(--morning-weight, 400);
+    letter-spacing: var(--morning-spacing, 6px);
+    line-height: 1.15;
+    color: #8B6914;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* ---------- 祝福语 ---------- */
+.poster-blessing {
+    margin-top: 4px;
+    position: relative;
+}
+.blessing-text {
+    font-family: var(--font-blessing, var(--font-kai));
+    font-size: var(--blessing-size, 20px);
+    font-weight: var(--blessing-weight, 400);
+    line-height: 1.8;
+    letter-spacing: 1px;
+    color: var(--ink);
+    max-width: 260px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    white-space: pre-wrap;     /* 保留换行符 */
+    word-break: break-word;
+}
+.blessing-text:hover {
+    background: rgba(200,160,74,0.06);
+}
+.blessing-text.custom {
+    /* 保持黑色，仅通过其他方式（可选）标记自定义状态 */
+}
+
+/* ---------- 祝福语编辑模式 ---------- */
+.blessing-edit {
+    display: none;
+    width: 100%;
+    max-width: 280px;
+    min-height: 60px;
+    font-family: var(--font-blessing, var(--font-kai));
+    font-size: var(--blessing-size, 20px);
+    font-weight: var(--blessing-weight, 400);
+    line-height: 1.8;
+    letter-spacing: 1px;
+    color: var(--ink);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: #fff;
+    resize: vertical;
+    outline: none;
+    text-align: center;
+}
+.blessing-edit:focus { border-color: var(--gold-dark); box-shadow: 0 0 0 3px rgba(200,160,74,0.12); }
+/* 编辑区左对齐，方便输入多行 */
+.blessing-edit {
+    text-align: left;
+    white-space: pre-wrap;
+}
+
+.blessing-edit-actions {
+    display: none;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-edit-action {
+    font-family: var(--font-base);
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 16px;
+    border: 1px solid #D5CBB8;
+    background: #fff;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+}
+.btn-edit-action:active { transform: scale(0.96); }
+.btn-edit-save {
+    background: var(--gold);
+    color: #fff;
+    border-color: transparent;
+    font-weight: 600;
+}
+.btn-edit-save:active { background: var(--gold-dark); }
+.btn-edit-reset {
+    font-size: 12px;
+    color: #aaa;
+    border-color: #e5e0d5;
+}
+
+/* 编辑模式激活 */
+.poster-blessing.editing .blessing-text { display: none; }
+.poster-blessing.editing .blessing-edit { display: block; }
+.poster-blessing.editing .blessing-edit-actions { display: flex; }
+
+/* ---------- 作者署名 ---------- */
+.poster-author {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.author-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: #eee;
+}
+.author-name {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--ink-light);
+}
+
+
+/* ============================================================
+   模板 B — 卡片式
+   ============================================================ */
+.poster.template-b .poster-image-zone {
+    height: calc(50% + 20px);   /* 多出 20px 覆盖白色卡片上方圆角区域 */
+    z-index: 1;
+}
+.poster.template-b .poster-image-fade { height: 0; }
+.poster.template-b .poster-info-zone {
+    top: 50%;
+    bottom: 0;
+    background: #fff;
+    border-radius: 18px 18px 0 0;
+    z-index: 3;
+    padding-top: 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.poster.template-b .morning-text { font-size: 56px; }
+.poster.template-b .blessing-text { font-size: 19px; }
+
+
+/* ============================================================
+   模板 C — 杂志风
+   ============================================================ */
+.poster.template-c .poster-image-zone {
+    top: 0; bottom: 0;
+    height: auto;
+    z-index: 0;
+}
+.poster.template-c .poster-image-fade {
+    top: 0; bottom: 0;
+    height: auto;
+    background: linear-gradient(
+        175deg,
+        rgba(0,0,0,0.05) 0%,
+        rgba(0,0,0,0.15) 35%,
+        rgba(0,0,0,0.50) 65%,
+        rgba(0,0,0,0.70) 100%
+    );
+}
+.poster.template-c .poster-info-zone {
+    top: 0; bottom: 0;
+    z-index: 2;
+    background: transparent;
+    justify-content: flex-end;
+    padding-bottom: 22px;
+}
+.poster.template-c .poster-weather,
+.poster.template-c .poster-date {
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.poster.template-c .morning-text {
+    color: #F0D68A;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.poster.template-c .blessing-text {
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+.poster.template-c .blessing-text:hover {
+    background: rgba(255,255,255,0.1);
+}
+.poster.template-c .author-name {
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.poster.template-c .author-avatar {
+    border-color: rgba(255,255,255,0.6);
+}
+
+
+/* ============================================================
+   字体预设 — 6 套手写/书法风格
+   全部使用 Google Fonts 免费手写体 + 系统楷体兜底
+   ============================================================ */
+
+/* font-song → 马山正（日常手写）*/
+.poster.font-song .morning-text { line-height: 1.1; }
+
+/* font-kai → 毛草（草书）*/
+.poster.font-kai .morning-text { line-height: 1.05; }
+.poster.font-kai .blessing-text { line-height: 1.9; }
+
+/* font-modern → 黄油体（艺术字）*/
+.poster.font-modern .morning-text { line-height: 1.05; }
+
+/* font-classic → 龙藏（随性手写）*/
+.poster.font-classic .morning-text { line-height: 1.15; }
+
+/* font-warm → 志莽行（行书）*/
+.poster.font-warm .morning-text { line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+/* font-elegant → 系统楷体（兜底，永远可用）*/
+.poster.font-elegant .morning-text { line-height: 1.1; }
+
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(0,0,0,0.78);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   弹窗 / 模板选择
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+.modal {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 32px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal { transform: translateY(0); }
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 18px;
+    color: var(--ink);
+}
+
+.template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.template-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 2px solid #eee;
+    background: #fafafa;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font-base);
+    font-size: 15px;
+}
+.template-option:active { background: #f0e8d8; }
+.template-option.active {
+    border-color: var(--gold);
+    background: #FFF8EC;
+}
+.template-option .tpl-icon    { font-size: 28px; line-height: 1; }
+.template-option .tpl-info    { flex: 1; }
+.template-option .tpl-name    { font-weight: 600; font-size: 16px; color: var(--ink); }
+.template-option .tpl-desc    { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
+.template-option .tpl-check   { font-size: 20px; color: var(--gold); opacity: 0; }
+.template-option.active .tpl-check { opacity: 1; }
+
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 374px) {
+    .poster-wrapper {
+        border-radius: 0;
+        padding-bottom: 150%;
+    }
+    .btn-tool { font-size: 12px; padding: 6px 10px; }
+    .top-toolbar { gap: 5px; }
+    .morning-text { font-size: 50px; letter-spacing: 4px; }
+    .blessing-text { font-size: 18px; }
+    .poster.template-c .morning-text { font-size: 50px; }
+}
+
+@media (min-width: 600px) {
+    body { align-items: center; padding: 24px 0 40px; }
+    .poster-wrapper { border-radius: 20px; max-width: 400px; }
+    .btn-tool { font-size: 14px; padding: 8px 16px; }
+    .morning-text { font-size: 68px; }
+}
