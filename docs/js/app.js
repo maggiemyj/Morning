@@ -267,8 +267,10 @@
         const data = await WeatherManager.fetch();
         if (dom.weatherIcon) dom.weatherIcon.textContent = data.icon;
         if (dom.weatherText) {
-            dom.weatherText.textContent =
-                `${data.text} ${data.temp}°C  ${data.tempMin}°~${data.tempMax}°`;
+            dom.weatherText.innerHTML =
+                `<span class="w-desc">${data.text}</span>` +
+                `<span class="w-temp">${data.temp}°</span>` +
+                `<span class="w-range">${data.tempMin}°~${data.tempMax}°</span>`;
         }
     }
 

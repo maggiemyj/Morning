@@ -251,6 +251,7 @@ body {
 }
 .weather-icon { font-size: 18px; line-height: 1; }
 .weather-text { font-weight: 400; }
+.w-desc, .w-temp, .w-range { display: inline; }
 
 /* ---------- 日期 ---------- */
 .poster-date {
@@ -477,15 +478,15 @@ body {
 
 /* ============================================================
    模板 D — 竖排诗意
-   暖桃背景 · 左日期右天气 · 居中画框 · 竖排大字早安
+   暖桃背景 · 左日期右天气 · 居中画框 · 早晚安分两区竖排
    ============================================================ */
 .poster.template-d {
     background: #F2EEE6;
 }
 
-/* --- 图片居中带圆角画框 --- */
+/* --- 图片居中带圆角 --- */
 .poster.template-d .poster-image-zone {
-    top: 22%;
+    top: 24%;
     left: 6%;
     right: 6%;
     bottom: 32%;
@@ -503,7 +504,51 @@ body {
     justify-content: flex-start;
 }
 
-/* --- 左日期 · 右天气 --- */
+/* --- 左：日期（可读格式）--- */
+.poster.template-d .poster-date {
+    position: absolute;
+    top: 7%;
+    left: 12%;
+    text-align: left;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    line-height: 1.3;
+}
+.poster.template-d .date-day {
+    display: inline;
+    font-size: 38px;
+    font-weight: 600;
+    color: #3C2E24;
+    line-height: 1.0;
+}
+/* 加「日」后缀 */
+.poster.template-d .date-day::after {
+    content: '日';
+    font-size: 16px;
+    font-weight: 400;
+    color: #6B5E4A;
+    margin-left: 2px;
+}
+.poster.template-d .date-month {
+    font-size: 15px;
+    font-weight: 500;
+    color: #6B5E4A;
+}
+/* 加「月」后缀 */
+.poster.template-d .date-month::after {
+    content: '月';
+}
+.poster.template-d .date-weekday {
+    display: block;
+    font-size: 12px;
+    color: #A89880;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+.poster.template-d .date-sep,
+.poster.template-d .date-year { display: none; }
+
+/* --- 右：天气（两行堆叠）--- */
 .poster.template-d .poster-weather {
     position: absolute;
     top: 7%;
@@ -513,67 +558,60 @@ body {
     font-size: 14px;
     margin-bottom: 0;
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
 }
-.poster.template-d .weather-icon { font-size: 22px; }
-
-.poster.template-d .poster-date {
-    position: absolute;
-    top: 6.5%;
-    left: 12%;
-    text-align: left;
-    margin-bottom: 0;
-    letter-spacing: 0;
-    line-height: 1.2;
+.poster.template-d .weather-icon {
+    display: none;   /* 竖排布局隐藏图标，用文字就够 */
 }
-/* 日期数字：大而突出 */
-.poster.template-d .date-day {
+.poster.template-d .w-desc {
     display: block;
-    font-size: 40px;
+    font-size: 15px;
+    color: #6B5E4A;
+}
+.poster.template-d .w-temp {
+    display: block;
+    font-size: 22px;
     font-weight: 600;
     color: #3C2E24;
-    line-height: 1.0;
-    letter-spacing: -1px;
+    line-height: 1.2;
 }
-/* 月份 */
-.poster.template-d .date-month {
-    font-size: 14px;
-    font-weight: 500;
-    color: #6B5E4A;
-    margin-left: 2px;
-}
-/* 星期：最小最淡 */
-.poster.template-d .date-weekday {
+.poster.template-d .w-range {
     display: block;
     font-size: 11px;
     color: #A89880;
-    letter-spacing: 1px;
-    margin-top: 2px;
+    margin-top: 1px;
 }
-/* 隐藏分隔符和年份 */
-.poster.template-d .date-sep,
-.poster.template-d .date-year { display: none; }
 
-/* --- 早安：左下竖排，更大更紧凑 --- */
+/* --- 早安：分两区竖排，各自独立 --- */
 .poster.template-d .poster-morning {
     position: absolute;
     left: 12%;
     bottom: 8%;
-    writing-mode: vertical-rl;
+    writing-mode: horizontal-tb;   /* 恢复横排 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
     margin-bottom: 0;
 }
 .poster.template-d .poster-morning::before { display: none; }
-.poster.template-d .morning-text {
+.poster.template-d .m-char {
+    display: block;
+    font-family: var(--font-morning, var(--font-song));
     font-size: 52px;
-    letter-spacing: 6px;
+    font-weight: var(--morning-weight, 400);
     color: #4A3828;
-    text-shadow: none;
     line-height: 1.0;
+    letter-spacing: 0;
+}
+.poster.template-d .morning-text {
+    /* 覆盖默认的 morning-text 样式，继承到 m-char */
+    letter-spacing: 0;
 }
 
-/* --- 祝福语：右下方横排 --- */
+/* --- 祝福语：右下方 --- */
 .poster.template-d .poster-blessing {
     position: absolute;
     left: 34%;
@@ -589,16 +627,12 @@ body {
     color: #5C4A38;
 }
 
-/* --- 作者 --- */
-.poster.template-d .poster-author {
-    bottom: 14px;
-    right: 16px;
-}
+.poster.template-d .poster-author { bottom: 14px; right: 16px; }
 .poster.template-d .author-name { color: #8A7A65; }
 
 @media (max-width: 374px) {
-    .poster.template-d .date-day { font-size: 34px; }
-    .poster.template-d .morning-text { font-size: 44px; letter-spacing: 4px; }
+    .poster.template-d .date-day { font-size: 32px; }
+    .poster.template-d .m-char { font-size: 44px; }
     .poster.template-d .blessing-text { font-size: 15px; line-height: 1.9; }
 }
 
