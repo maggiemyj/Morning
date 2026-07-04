@@ -253,12 +253,11 @@
         const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
         if (dom.posterDate) {
             dom.posterDate.innerHTML =
-                `<span class="date-day">${now.getDate()}</span>` +
-                `<span class="date-sep"> / </span>` +
                 `<span class="date-month">${now.getMonth()+1}</span>` +
-                `<span class="date-sep"> / </span>` +
-                `<span class="date-year">${now.getFullYear()}</span>` +
-                `<span class="date-weekday"> 星期${weekDays[now.getDay()]}</span>`;
+                `<span class="date-sep">月</span>` +
+                `<span class="date-day">${now.getDate()}</span>` +
+                `<span class="date-sep">日</span>` +
+                `<span class="date-weekday">星期${weekDays[now.getDay()]}</span>`;
         }
     }
 
