@@ -58,7 +58,7 @@ const ShareManager = {
             useCORS: true,
             allowTaint: true,
             scale: this._EXPORT_SCALE,
-            backgroundColor: '#FBF6EE',   // JPEG 无透明通道，用海报底色填充
+            backgroundColor: '#FAF8F5',   // JPEG 无透明通道，用海报底色填充
             logging: false,
         });
     },
