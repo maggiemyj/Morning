@@ -1,6 +1,7 @@
 /* ============================================================
    保存 & 分享模块
    - html2canvas 按需动态加载（不阻塞首屏）
+   - JPEG 输出，控制在 ~200KB
    - Web Share API 分享
    ============================================================ */
 
@@ -9,6 +10,10 @@ const ShareManager = {
     // 缓存 html2canvas 加载 Promise
     _h2cPromise: null,
 
+    /** 输出配置：scale=2→750x1000px，JPEG 质量 0.88→~200KB */
+    _EXPORT_SCALE: 2,
+    _JPEG_QUALITY: 0.88,
+
     /**
      * 按需加载 html2canvas，避免 CDN 阻塞首屏
      */
@@ -16,7 +21,6 @@ const ShareManager = {
         if (this._h2cPromise) return this._h2cPromise;
 
         this._h2cPromise = new Promise((resolve, reject) => {
-            // 如果已加载过（比如其他方式引入），直接返回
             if (typeof html2canvas !== 'undefined') {
                 resolve(html2canvas);
                 return;
@@ -32,7 +36,6 @@ const ShareManager = {
                 }
             };
             script.onerror = () => {
-                // 尝试备用 CDN
                 const fallback = document.createElement('script');
                 fallback.src = 'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';
                 fallback.onload = () => resolve(html2canvas);
@@ -45,32 +48,38 @@ const ShareManager = {
         return this._h2cPromise;
     },
 
+    /** 渲染海报为 canvas */
+    async _renderCanvas() {
+        const posterEl = document.getElementById('poster');
+        if (!posterEl) throw new Error('海报元素未找到');
+
+        await this._loadHtml2canvas();
+        return html2canvas(posterEl, {
+            useCORS: true,
+            allowTaint: true,
+            scale: this._EXPORT_SCALE,
+            backgroundColor: '#FBF6EE',   // JPEG 无透明通道，用海报底色填充
+            logging: false,
+        });
+    },
+
     /**
-     * 将海报区域保存为 PNG 图片并触发下载
+     * 保存为 JPEG（体积小，适合微信分享）
      */
     async saveAsImage() {
-        const posterEl = document.getElementById('poster');
-        if (!posterEl) return;
-
-        Toast.show('正在生成图片...');
+        Toast.show('正在生成图片…');
 
         try {
-            await this._loadHtml2canvas();
-            const scale = Math.max(3, window.devicePixelRatio || 2);
-            const canvas = await html2canvas(posterEl, {
-                useCORS: true,
-                allowTaint: true,
-                scale: scale,
-                backgroundColor: null,
-                logging: false,
-            });
+            const canvas = await this._renderCanvas();
 
             const link = document.createElement('a');
-            link.download = `早安海报_${this._getDateStr()}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.download = `早安海报_${this._getDateStr()}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', this._JPEG_QUALITY);
             link.click();
 
-            Toast.show('✅ 图片已保存！');
+            // 打印文件大小
+            const kb = Math.round(link.href.length * 0.75 / 1024);
+            Toast.show(`✅ 已保存 (~${kb}KB)`);
         } catch (err) {
             console.error('保存失败:', err);
             Toast.show('保存失败，请尝试截图保存');
@@ -90,28 +99,20 @@ const ShareManager = {
             return;
         }
 
-        Toast.show('正在生成分享图片...');
+        Toast.show('正在生成分享图片…');
 
         try {
-            await this._loadHtml2canvas();
-            const scale = Math.max(3, window.devicePixelRatio || 2);
-            const canvas = await html2canvas(posterEl, {
-                useCORS: true,
-                allowTaint: true,
-                scale: scale,
-                backgroundColor: null,
-                logging: false,
-            });
+            const canvas = await this._renderCanvas();
 
             const blob = await new Promise((resolve, reject) => {
                 canvas.toBlob(b => {
                     if (b) resolve(b);
                     else reject(new Error('toBlob failed'));
-                }, 'image/png');
+                }, 'image/jpeg', this._JPEG_QUALITY);
             });
 
-            const file = new File([blob], `早安海报_${this._getDateStr()}.png`, {
-                type: 'image/png',
+            const file = new File([blob], `早安海报_${this._getDateStr()}.jpg`, {
+                type: 'image/jpeg',
             });
 
             const shareData = {
