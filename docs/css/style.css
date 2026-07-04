@@ -475,6 +475,109 @@ body {
 
 
 /* ============================================================
+   模板 D — 水墨丹青（全图 + 浓墨渐变 + 金字）
+   ============================================================ */
+.poster.template-d .poster-image-zone {
+    top: 0; bottom: 0;
+    height: auto;
+    z-index: 0;
+}
+.poster.template-d .poster-image-zone::after {
+    background: linear-gradient(
+        180deg,
+        rgba(0,0,0,0.05) 0%,
+        rgba(0,0,0,0.20) 30%,
+        rgba(20,15,5,0.55) 60%,
+        rgba(10,8,2,0.82) 85%,
+        rgba(5,3,0,0.92) 100%
+    );
+}
+.poster.template-d .poster-info-zone {
+    top: 0; bottom: 0;
+    z-index: 2;
+    background: transparent;
+    justify-content: center;
+    padding-bottom: 0;
+}
+.poster.template-d .poster-weather,
+.poster.template-d .poster-date {
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.poster.template-d .morning-text {
+    color: #E8D5A3;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    font-size: 68px;
+    letter-spacing: 14px;
+}
+.poster.template-d .blessing-text {
+    color: rgba(255,255,255,0.88);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+    margin-top: 6px;
+}
+.poster.template-d .blessing-text:hover {
+    background: rgba(255,255,255,0.08);
+}
+.poster.template-d .blessing-switch {
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+.poster.template-d .author-name {
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.poster.template-d .author-avatar {
+    border-color: rgba(232,213,163,0.5);
+}
+
+
+/* ============================================================
+   模板 E — 素白简约（小图 + 大量留白 + 清冷色调）
+   ============================================================ */
+.poster.template-e .poster-image-zone {
+    height: 38%;
+}
+.poster.template-e .poster-image-zone::after {
+    background: linear-gradient(to bottom,
+        rgba(251,246,238,0) 80%,
+        rgba(251,246,238,0.6) 95%,
+        #FBF6EE 100%);
+}
+.poster.template-e .poster-info-zone {
+    top: 38%;
+    bottom: 0;
+    justify-content: flex-start;
+    padding-top: 28px;
+    background: #FBF6EE;
+}
+.poster.template-e .poster-weather {
+    color: var(--ink-lighter);
+    margin-bottom: 12px;
+}
+.poster.template-e .poster-date {
+    color: var(--ink-lighter);
+    margin-bottom: 22px;
+    font-size: 14px;
+}
+.poster.template-e .morning-text {
+    font-size: 52px;
+    letter-spacing: 6px;
+    color: var(--ink);
+    text-shadow: none;
+}
+.poster.template-e .blessing-text {
+    font-size: 18px;
+    color: var(--ink-light);
+    line-height: 2.0;
+    margin-top: 10px;
+}
+.poster.template-e .poster-author {
+    bottom: 20px;
+}
+
+
+/* ============================================================
    字体预设 — 6 套手写/书法风格
    全部使用 Google Fonts 免费手写体 + 系统楷体兜底
    ============================================================ */

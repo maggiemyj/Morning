@@ -1,6 +1,6 @@
 /* ============================================================
    模板管理器
-   3 套海报模板，切换后数据不变，仅布局变化
+   5 套海报模板，切换后数据不变，仅布局变化
    ============================================================ */
 
 const TEMPLATES = [
@@ -9,7 +9,7 @@ const TEMPLATES = [
         name: '经典居中',
         desc: '大字居中，简约大气',
         icon: '🖼️',
-        className: '',           // 默认无 class
+        className: '',
     },
     {
         id: 'b',
@@ -21,9 +21,23 @@ const TEMPLATES = [
     {
         id: 'c',
         name: '杂志风',
-        desc: '大字突出，设计感强',
+        desc: '全图叠字，设计感强',
         icon: '📰',
         className: 'template-c',
+    },
+    {
+        id: 'd',
+        name: '水墨丹青',
+        desc: '浓墨重彩，意境悠远',
+        icon: '🎋',
+        className: 'template-d',
+    },
+    {
+        id: 'e',
+        name: '素白简约',
+        desc: '大量留白，清新雅致',
+        icon: '🤍',
+        className: 'template-e',
     },
 ];
 
@@ -50,15 +64,11 @@ const TemplateManager = {
         const tpl = TEMPLATES.find(t => t.id === templateId);
         if (!tpl) return false;
 
-        // 更新 localStorage
         try {
             localStorage.setItem(this._storageKey, templateId);
         } catch (_) {}
 
-        // 更新 DOM
         this._applyClass(tpl.className);
-
-        // 更新弹窗选中状态
         this._updateModalActive();
 
         return true;
@@ -74,12 +84,10 @@ const TemplateManager = {
         const poster = document.getElementById('poster');
         if (!poster) return;
 
-        // 移除所有模板 class
         TEMPLATES.forEach(t => {
             if (t.className) poster.classList.remove(t.className);
         });
 
-        // 添加新 class
         if (className) poster.classList.add(className);
     },
 
