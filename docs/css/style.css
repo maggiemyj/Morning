@@ -1,19 +1,22 @@
 /* ============================================================
-   早安海报 — 样式表
-   布局：图片区(上 45%) + 信息区(下 55%) | 3 套模板 | 6 套字体
-   使用 padding-bottom 撑高 + 绝对定位（兼容性最好）
+   早安海报 — 样式表  ·  「晨露」主题
+   克制清冷 × 松绿点缀 × 在花哨泛滥的早安图中脱颖而出
    ============================================================ */
 
 /* ---------- CSS 变量 ---------- */
 :root {
-    --gold:        #C8A04A;
-    --gold-light:  #E8D5A3;
-    --gold-dark:   #9A7B32;
-    --warm-white:  #FFF8EC;
-    --warm-bg:     #FBF6EE;
-    --ink:         #2C2416;
-    --ink-light:   #6B5E4A;
-    --ink-lighter: #9A8E7A;
+    --sage:         #7A9A8C;   /* 松绿 — 签名 accent，自然清新 */
+    --sage-light:   #B8CDC3;
+    --sage-subtle:  #E8EFEB;
+    --gold:         #C8A050;   /* 古金 — 仅用于「早安」大字 */
+    --gold-light:   #E0CDA0;
+    --paper:        #FAF8F5;   /* 晨光白 — 海报背景 */
+    --page-bg:      #EEEAE3;   /* 页面底色 */
+    --ink:          #1E1A16;   /* 墨 — 主文字 */
+    --ink-light:    #6B6258;   /* 暖灰 — 天气/日期 */
+    --ink-lighter:  #9B9288;   /* 浅灰 — 辅助信息 */
+    --white:        #FFFFFF;
+    --border:       #E8E3DB;
 
     --radius:      16px;
     --font-base:   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
@@ -27,7 +30,7 @@ html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
 body {
     font-family: var(--font-base);
-    background: #F0EBE3;
+    background: var(--page-bg);
     color: var(--ink);
     min-height: 100dvh;
     display: flex;
@@ -61,15 +64,15 @@ body {
 .top-toolbar    { padding: 8px 0 4px; flex-wrap: nowrap; }
 .bottom-toolbar { padding: 4px 0 16px; gap: 12px; }
 
-/* ---------- 高级感工具按钮（顶部） ---------- */
+/* ---------- 顶部工具按钮 ---------- */
 .btn-tool {
     font-family: var(--font-base);
     font-size: 13px;
     font-weight: 500;
     padding: 7px 14px;
-    border: 1px solid #D5CBB8;
+    border: 1px solid var(--border);
     border-radius: 20px;
-    background: rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.6);
     color: var(--ink-light);
     cursor: pointer;
     user-select: none;
@@ -79,27 +82,14 @@ body {
     letter-spacing: 0.5px;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    position: relative;
-    overflow: hidden;
 }
-.btn-tool::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    opacity: 0;
-    transition: opacity 0.22s ease;
-    background: linear-gradient(135deg, rgba(200,160,74,0.08), rgba(200,160,74,0.02));
-}
-.btn-tool:hover::after,
-.btn-tool:active::after { opacity: 1; }
 .btn-tool:hover {
-    border-color: var(--gold);
-    color: var(--gold-dark);
+    border-color: var(--sage);
+    color: var(--sage);
 }
 .btn-tool:active {
     transform: scale(0.95);
-    background: rgba(200,160,74,0.12);
+    background: var(--sage-subtle);
 }
 
 /* ---------- 底部操作按钮 ---------- */
@@ -108,9 +98,9 @@ body {
     font-size: 16px;
     font-weight: 500;
     padding: 12px 32px;
-    border: 1.5px solid #D5CBB8;
+    border: 1.5px solid var(--border);
     border-radius: 26px;
-    background: #fff;
+    background: var(--white);
     color: var(--ink);
     cursor: pointer;
     user-select: none;
@@ -124,28 +114,28 @@ body {
 }
 .btn-action:active {
     transform: scale(0.97);
-    background: #f8f2e8;
+    background: #f5f2ec;
 }
 .btn-action-primary {
-    background: linear-gradient(135deg, #C8A04A, #B8923E);
+    background: var(--sage);
     color: #fff;
     border-color: transparent;
     font-weight: 600;
-    box-shadow: 0 4px 16px rgba(200,160,74,0.3);
+    box-shadow: 0 4px 14px rgba(122,154,140,0.3);
 }
 .btn-action-primary:active {
-    background: linear-gradient(135deg, #B08A38, #A07A2E);
-    box-shadow: 0 2px 8px rgba(200,160,74,0.2);
+    background: #6A8A7C;
+    box-shadow: 0 2px 8px rgba(122,154,140,0.2);
 }
 
-/* ---------- 旧按钮兼容（弹窗关闭用） ---------- */
+/* ---------- 弹窗关闭按钮 ---------- */
 .btn {
     font-family: var(--font-base);
     font-size: 15px;
     padding: 12px 24px;
     border: none;
     border-radius: 24px;
-    background: var(--gold);
+    background: var(--sage);
     color: #fff;
     font-weight: 600;
     cursor: pointer;
@@ -154,20 +144,20 @@ body {
     transition: background 0.15s, transform 0.1s;
     white-space: nowrap;
 }
-.btn:active { transform: scale(0.96); background: #b08632; }
+.btn:active { transform: scale(0.96); background: #6A8A7C; }
 .btn-block { width: 100%; display: block; text-align: center; }
 
 /* ============================================================
-   海报外层 — padding-bottom 撑高
+   海报外层
    ============================================================ */
 .poster-wrapper {
     width: 100%;
     max-width: 375px;
     border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
     position: relative;
-    padding-bottom: 133.33%;     /* 3:4 */
+    padding-bottom: 133.33%;
     height: 0;
 }
 
@@ -175,21 +165,18 @@ body {
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: var(--warm-bg);
+    background: var(--paper);
 }
 
 /* ============================================================
    图片区（上方 45%）
-   — 用 div + background-image 代替 img 标签
-   — html2canvas 对 background-size:cover 的渲染比 object-fit 更可靠
    ============================================================ */
 .poster-image-zone {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 45%;
     overflow: hidden;
-    /* 兜底渐变：图片加载前/失败时 */
-    background: linear-gradient(135deg, #D5C4A1 0%, #C4B08A 50%, #A89878 100%);
+    background: linear-gradient(135deg, #D8CFC4 0%, #C8BFB2 50%, #B0A89A 100%);
 }
 
 .poster-image {
@@ -215,34 +202,33 @@ body {
 }
 .poster-image-loading.show { opacity: 1; }
 
-/* 图片底部渐变 — ::after 伪元素，无独立 DOM，消除边界线 */
+/* 图片底部渐变过渡 */
 .poster-image-zone::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom,
-        rgba(251,246,238,0) 70%,
-        rgba(251,246,238,0.45) 88%,
-        rgba(251,246,238,0.88) 96%,
-        #FBF6EE 100%);
+        rgba(250,248,245,0) 70%,
+        rgba(250,248,245,0.45) 88%,
+        rgba(250,248,245,0.88) 96%,
+        #FAF8F5 100%);
     pointer-events: none;
     z-index: 2;
 }
 
 /* ============================================================
    信息区（下方 55%）
-   — top 偏移量覆盖 2px 到图片区，彻底消除接缝线
    ============================================================ */
 .poster-info-zone {
     position: absolute;
-    top: calc(45% - 2px);  /* 2px 重叠，消除与图片区的渲染间隙 */
+    top: calc(45% - 2px);
     bottom: 0;
     left: 0; right: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #FBF6EE;
+    background: var(--paper);
 }
 
 .poster-content {
@@ -258,43 +244,61 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 15px;
-    color: var(--ink-light);
-    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--ink-lighter);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
-.weather-icon { font-size: 22px; line-height: 1; }
-.weather-text { font-weight: 500; }
+.weather-icon { font-size: 18px; line-height: 1; }
+.weather-text { font-weight: 400; }
 
 /* ---------- 日期 ---------- */
 .poster-date {
-    font-size: 15px;
-    color: var(--ink-light);
-    letter-spacing: 1px;
-    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--ink-lighter);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
 }
 
-/* ---------- 早安大字 — 使用 CSS 变量让字体预设覆盖 ---------- */
-.poster-morning { margin-bottom: 10px; }
+/* ---------- 签名线（早安上方松绿细线） ---------- */
+.poster-morning {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* 签名绿线 — 所有模板统一的视觉记忆点 */
+.poster-morning::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--sage);
+    margin-bottom: 12px;
+    border-radius: 1px;
+}
+
+/* ---------- 早安大字 ---------- */
 .morning-text {
     font-family: var(--font-morning, var(--font-song));
     font-size: 62px;
     font-weight: var(--morning-weight, 400);
     letter-spacing: var(--morning-spacing, 6px);
     line-height: 1.15;
-    color: #8B6914;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    color: var(--gold);
 }
 
 /* ---------- 祝福语 ---------- */
 .poster-blessing {
+    text-align: left;
     margin-top: 4px;
     position: relative;
 }
 .blessing-text {
     font-family: var(--font-blessing, var(--font-kai));
-    font-size: var(--blessing-size, 20px);
+    font-size: var(--blessing-size, 17px);
     font-weight: var(--blessing-weight, 400);
-    line-height: 1.8;
+    line-height: 2.0;
     letter-spacing: 1px;
     color: var(--ink);
     max-width: 260px;
@@ -302,14 +306,14 @@ body {
     padding: 4px 8px;
     border-radius: 8px;
     transition: background 0.2s;
-    white-space: pre-wrap;     /* 保留换行符 */
+    white-space: pre-wrap;
     word-break: break-word;
 }
 .blessing-text:hover {
-    background: rgba(200,160,74,0.06);
+    background: rgba(122,154,140,0.06);
 }
 .blessing-text.custom {
-    /* 保持黑色，仅通过其他方式（可选）标记自定义状态 */
+    /* 自定义祝福语保持原色 */
 }
 
 /* ---------- 祝福语编辑模式 ---------- */
@@ -319,25 +323,21 @@ body {
     max-width: 280px;
     min-height: 60px;
     font-family: var(--font-blessing, var(--font-kai));
-    font-size: var(--blessing-size, 20px);
+    font-size: var(--blessing-size, 17px);
     font-weight: var(--blessing-weight, 400);
-    line-height: 1.8;
+    line-height: 2.0;
     letter-spacing: 1px;
     color: var(--ink);
-    border: 2px solid var(--gold);
+    border: 2px solid var(--sage);
     border-radius: 12px;
     padding: 10px 14px;
     background: #fff;
     resize: vertical;
     outline: none;
-    text-align: center;
-}
-.blessing-edit:focus { border-color: var(--gold-dark); box-shadow: 0 0 0 3px rgba(200,160,74,0.12); }
-/* 编辑区左对齐，方便输入多行 */
-.blessing-edit {
     text-align: left;
     white-space: pre-wrap;
 }
+.blessing-edit:focus { border-color: #5A8A6C; box-shadow: 0 0 0 3px rgba(122,154,140,0.12); }
 
 .blessing-edit-actions {
     display: none;
@@ -352,7 +352,7 @@ body {
     font-size: 13px;
     padding: 6px 16px;
     border-radius: 16px;
-    border: 1px solid #D5CBB8;
+    border: 1px solid var(--border);
     background: #fff;
     color: var(--ink-light);
     cursor: pointer;
@@ -361,19 +361,18 @@ body {
 }
 .btn-edit-action:active { transform: scale(0.96); }
 .btn-edit-save {
-    background: var(--gold);
+    background: var(--sage);
     color: #fff;
     border-color: transparent;
     font-weight: 600;
 }
-.btn-edit-save:active { background: var(--gold-dark); }
+.btn-edit-save:active { background: #6A8A7C; }
 .btn-edit-reset {
     font-size: 12px;
-    color: #aaa;
-    border-color: #e5e0d5;
+    color: #bbb;
+    border-color: #e8e3db;
 }
 
-/* 编辑模式激活 */
 .poster-blessing.editing .blessing-text { display: none; }
 .poster-blessing.editing .blessing-edit { display: block; }
 .poster-blessing.editing .blessing-edit-actions { display: flex; }
@@ -388,19 +387,19 @@ body {
     gap: 8px;
 }
 .author-avatar {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--gold-light);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1.5px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     background: #eee;
 }
 .author-name {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
     letter-spacing: 1px;
-    color: var(--ink-light);
+    color: var(--ink-lighter);
 }
 
 
@@ -408,7 +407,7 @@ body {
    模板 B — 卡片式
    ============================================================ */
 .poster.template-b .poster-image-zone {
-    height: calc(50% + 20px);   /* 多出 20px 覆盖白色卡片上方圆角区域 */
+    height: calc(50% + 20px);
     z-index: 1;
 }
 .poster.template-b .poster-image-zone::after { display: none; }
@@ -422,11 +421,11 @@ body {
     box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
 }
 .poster.template-b .morning-text { font-size: 56px; }
-.poster.template-b .blessing-text { font-size: 19px; }
+.poster.template-b .blessing-text { font-size: 16px; }
 
 
 /* ============================================================
-   模板 C — 杂志风
+   模板 C — 杂志风（全图 + 深色叠字）
    ============================================================ */
 .poster.template-c .poster-image-zone {
     top: 0; bottom: 0;
@@ -449,40 +448,36 @@ body {
     justify-content: flex-end;
     padding-bottom: 22px;
 }
+.poster.template-c .poster-morning::before {
+    background: rgba(255,255,255,0.5);
+}
 .poster.template-c .poster-weather,
 .poster.template-c .poster-date {
-    color: rgba(255,255,255,0.85);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    color: rgba(255,255,255,0.8);
 }
 .poster.template-c .morning-text {
-    color: #F0D68A;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    color: var(--gold-light);
 }
 .poster.template-c .blessing-text {
-    color: rgba(255,255,255,0.92);
-    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.9);
 }
 .poster.template-c .blessing-text:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.08);
 }
 .poster.template-c .author-name {
-    color: rgba(255,255,255,0.85);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    color: rgba(255,255,255,0.8);
 }
 .poster.template-c .author-avatar {
-    border-color: rgba(255,255,255,0.6);
+    border-color: rgba(255,255,255,0.4);
 }
 
 
 /* ============================================================
-   模板 D — 竖排诗意
-   暖色背景 · 图片居中带圆角 · 天气日期顶部优雅排布 · 早安竖排
+   模板 D — 竖排诗意（居中画框 + 竖排早安）
    ============================================================ */
 .poster.template-d {
-    background: #F4EFE6;
+    background: #F5F2EC;
 }
-
-/* --- 图片居中，留左右边距，加圆角和微阴影 --- */
 .poster.template-d .poster-image-zone {
     top: 20%;
     left: 6%;
@@ -493,38 +488,26 @@ body {
     overflow: hidden;
     box-shadow: 0 3px 16px rgba(0,0,0,0.07);
 }
-.poster.template-d .poster-image-zone::after {
-    display: none;
-}
-
-/* --- 信息区覆盖全海报 --- */
+.poster.template-d .poster-image-zone::after { display: none; }
 .poster.template-d .poster-info-zone {
     top: 0; bottom: 0;
     height: auto;
     background: transparent;
     justify-content: flex-start;
 }
-
-/* --- 天气：顶部小标签风 --- */
 .poster.template-d .poster-weather {
     position: absolute;
     top: 7%;
     left: 0; right: 0;
     text-align: center;
-    color: #8A7A65;
-    font-size: 14px;
-    letter-spacing: 0.5px;
+    color: var(--ink-lighter);
+    font-size: 13px;
     margin-bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
 }
-.poster.template-d .weather-icon {
-    font-size: 18px;
-}
-
-/* --- 日期：优雅居中 --- */
 .poster.template-d .poster-date {
     position: absolute;
     top: 13%;
@@ -535,8 +518,6 @@ body {
     letter-spacing: 2px;
     margin-bottom: 0;
 }
-
-/* --- 早安：左下竖排，深色醒目 --- */
 .poster.template-d .poster-morning {
     position: absolute;
     left: 12%;
@@ -544,6 +525,7 @@ body {
     writing-mode: vertical-rl;
     margin-bottom: 0;
 }
+.poster.template-d .poster-morning::before { display: none; }  /* 竖排时不显示横线 */
 .poster.template-d .morning-text {
     font-size: 44px;
     letter-spacing: 12px;
@@ -551,8 +533,6 @@ body {
     text-shadow: none;
     line-height: 1.0;
 }
-
-/* --- 祝福语：右下横排，与早安形成纵横对比 --- */
 .poster.template-d .poster-blessing {
     position: absolute;
     left: 32%;
@@ -563,49 +543,23 @@ body {
 }
 .poster.template-d .blessing-text {
     max-width: 100%;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 2.0;
     color: #5C4A38;
 }
-
-/* --- 作者 --- */
-.poster.template-d .poster-author {
-    bottom: 14px;
-    right: 16px;
-}
-.poster.template-d .author-name {
-    color: #8A7A65;
-}
-
-/* ---- 响应式微调 ---- */
-@media (max-width: 374px) {
-    .poster.template-d .morning-text { font-size: 38px; letter-spacing: 10px; }
-    .poster.template-d .blessing-text { font-size: 16px; line-height: 1.9; }
-}
+.poster.template-d .poster-author { bottom: 14px; right: 16px; }
+.poster.template-d .author-name { color: #8A7A65; }
 
 
 /* ============================================================
    字体预设 — 6 套手写/书法风格
-   全部使用 Google Fonts 免费手写体 + 系统楷体兜底
    ============================================================ */
-
-/* font-song → 马山正（日常手写）*/
 .poster.font-song .morning-text { line-height: 1.1; }
-
-/* font-kai → 毛草（草书）*/
 .poster.font-kai .morning-text { line-height: 1.05; }
 .poster.font-kai .blessing-text { line-height: 1.9; }
-
-/* font-modern → 黄油体（艺术字）*/
 .poster.font-modern .morning-text { line-height: 1.05; }
-
-/* font-classic → 龙藏（随性手写）*/
 .poster.font-classic .morning-text { line-height: 1.15; }
-
-/* font-warm → 志莽行（行书）*/
-.poster.font-warm .morning-text { line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-/* font-elegant → 系统楷体（兜底，永远可用）*/
+.poster.font-warm .morning-text { line-height: 1.1; }
 .poster.font-elegant .morning-text { line-height: 1.1; }
 
 
@@ -617,11 +571,11 @@ body {
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: rgba(0,0,0,0.78);
+    background: rgba(30,26,22,0.85);
     color: #fff;
     padding: 10px 24px;
     border-radius: 24px;
-    font-size: 15px;
+    font-size: 14px;
     letter-spacing: 1px;
     pointer-events: none;
     opacity: 0;
@@ -693,14 +647,14 @@ body {
 }
 .template-option:active { background: #f0e8d8; }
 .template-option.active {
-    border-color: var(--gold);
-    background: #FFF8EC;
+    border-color: var(--sage);
+    background: var(--sage-subtle);
 }
 .template-option .tpl-icon    { font-size: 28px; line-height: 1; }
 .template-option .tpl-info    { flex: 1; }
 .template-option .tpl-name    { font-weight: 600; font-size: 16px; color: var(--ink); }
 .template-option .tpl-desc    { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
-.template-option .tpl-check   { font-size: 20px; color: var(--gold); opacity: 0; }
+.template-option .tpl-check   { font-size: 20px; color: var(--sage); opacity: 0; }
 .template-option.active .tpl-check { opacity: 1; }
 
 
@@ -715,8 +669,10 @@ body {
     .btn-tool { font-size: 12px; padding: 6px 10px; }
     .top-toolbar { gap: 5px; }
     .morning-text { font-size: 50px; letter-spacing: 4px; }
-    .blessing-text { font-size: 18px; }
+    .blessing-text { font-size: 16px; }
     .poster.template-c .morning-text { font-size: 50px; }
+    .poster.template-d .morning-text { font-size: 38px; letter-spacing: 10px; }
+    .poster.template-d .blessing-text { font-size: 15px; line-height: 1.9; }
 }
 
 @media (min-width: 600px) {
