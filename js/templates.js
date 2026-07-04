@@ -27,16 +27,16 @@ const TEMPLATES = [
     },
     {
         id: 'd',
-        name: '水墨丹青',
-        desc: '浓墨重彩，意境悠远',
-        icon: '🎋',
+        name: '竖排诗意',
+        desc: '图片居中，早安竖排',
+        icon: '📜',
         className: 'template-d',
     },
     {
         id: 'e',
-        name: '素白简约',
-        desc: '大量留白，清新雅致',
-        icon: '🤍',
+        name: '线条韵律',
+        desc: '暖色背景，金线点缀',
+        icon: '✨',
         className: 'template-e',
     },
 ];
