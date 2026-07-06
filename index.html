@@ -8,14 +8,6 @@
     <title>早安海报</title>
 
     <link rel="stylesheet" href="css/style.css">
-
-    <!-- 中文字体：通过 jsDelivr CDN 加载（国内可访问），Fontsource 提供 unicode-range 子集化 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ma-shan-zheng/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/zhi-mang-xing/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/long-cang/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/liu-jian-mao-cao/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/zcool-kuaile/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/zcool-xiaowei/index.css">
 </head>
 <body>
 
@@ -59,9 +51,11 @@
                             2026年7月3日 星期五
                         </div>
 
-                        <!-- 早安大字 -->
+                        <!-- 早安大字（预渲染PNG，无需加载字体） -->
                         <div class="poster-morning">
-                            <span class="morning-text"><span class="m-char">早</span> <span class="m-char">安</span></span>
+                            <img class="morning-img" id="morningImg" src="assets/fonts/mashan.png" alt="早安">
+                            <img class="morning-char morning-char-zao" id="morningCharZao" src="assets/fonts/mashan_zao.png" alt="早">
+                            <img class="morning-char morning-char-an" id="morningCharAn" src="assets/fonts/mashan_an.png" alt="安">
                         </div>
 
                         <!-- 祝福语（可点击编辑） -->

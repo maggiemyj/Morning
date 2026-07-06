@@ -63,7 +63,7 @@ const ShareManager = {
             logging: false,
         });
 
-        // 圆角裁剪：生成最终 canvas
+        // 圆角裁剪
         const radius = this._BORDER_RADIUS * this._EXPORT_SCALE;
         const w = rawCanvas.width;
         const h = rawCanvas.height;
@@ -73,28 +73,27 @@ const ShareManager = {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
 
-        // 填充海报底色
-        ctx.fillStyle = '#FAF8F5';
-        ctx.fillRect(0, 0, w, h);
-
-        // 圆角裁剪路径
+        // 使用 roundRect（现代浏览器均支持）做圆角裁剪
         ctx.beginPath();
-        ctx.moveTo(radius, 0);
-        ctx.arcTo(w, 0, w, radius, radius);
-        ctx.arcTo(w, h, w - radius, h, radius);
-        ctx.arcTo(0, h, 0, h - radius, radius);
-        ctx.arcTo(0, 0, radius, 0, radius);
-        ctx.closePath();
+        if (ctx.roundRect) {
+            ctx.roundRect(0, 0, w, h, radius);
+        } else {
+            // 兜底：arcTo 路径
+            ctx.moveTo(radius, 0);
+            ctx.arcTo(w, 0, w, radius, radius);
+            ctx.arcTo(w, h, w - radius, h, radius);
+            ctx.arcTo(0, h, 0, h - radius, radius);
+            ctx.arcTo(0, 0, radius, 0, radius);
+            ctx.closePath();
+        }
         ctx.clip();
-
-        // 将 html2canvas 渲染结果贴入圆角区域
         ctx.drawImage(rawCanvas, 0, 0);
 
         return canvas;
     },
 
     /**
-     * 保存为 JPEG（体积小，适合微信分享）
+     * 保存为 PNG（支持透明圆角）
      */
     async saveAsImage() {
         Toast.show('正在生成图片…');
@@ -103,8 +102,8 @@ const ShareManager = {
             const canvas = await this._renderCanvas();
 
             const link = document.createElement('a');
-            link.download = `早安海报_${this._getDateStr()}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', this._JPEG_QUALITY);
+            link.download = `早安海报_${this._getDateStr()}.png`;
+            link.href = canvas.toDataURL('image/png');
             link.click();
 
             // 打印文件大小

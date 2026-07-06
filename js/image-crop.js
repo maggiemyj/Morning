@@ -33,8 +33,18 @@ const ImageCropController = {
 
         this._loadPosition();
 
+        // 图片区和图片本身都禁用浏览器触摸手势
         const zone = document.getElementById('posterImageZone');
-        if (zone) zone.classList.add('croppable');
+        const img = document.getElementById('posterImage');
+        if (zone) {
+            zone.classList.add('croppable');
+            zone.style.touchAction = 'none';       // 内联最高优先级
+        }
+        if (img) {
+            img.style.touchAction = 'none';
+            img.style.webkitUserSelect = 'none';
+            img.style.userSelect = 'none';
+        }
 
         // 绑定到 poster 上（而非 image-zone），避免被 info-zone 的 z-index 遮挡
         const poster = document.getElementById('poster');
@@ -54,7 +64,16 @@ const ImageCropController = {
         this.reset(false);
 
         const zone = document.getElementById('posterImageZone');
-        if (zone) zone.classList.remove('croppable', 'dragging');
+        const img = document.getElementById('posterImage');
+        if (zone) {
+            zone.classList.remove('croppable', 'dragging');
+            zone.style.touchAction = '';
+        }
+        if (img) {
+            img.style.touchAction = '';
+            img.style.webkitUserSelect = '';
+            img.style.userSelect = '';
+        }
 
         const poster = document.getElementById('poster');
         if (poster) {

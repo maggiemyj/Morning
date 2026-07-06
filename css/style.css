@@ -20,11 +20,6 @@
 
     --radius:      16px;
     --font-base:      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    --font-morning:   "Ma Shan Zheng", cursive, serif;
-    --font-blessing:  "ZCOOL KuaiLe", cursive, sans-serif;
-    /* 以下为 fallback 变量，供 var() 嵌套回退使用 */
-    --font-song:      "Ma Shan Zheng", cursive, serif;
-    --font-kai:       "ZCOOL KuaiLe", cursive, sans-serif;
 }
 
 /* ---------- 全局 ---------- */
@@ -334,14 +329,18 @@ body {
     border-radius: 1px;
 }
 
-/* ---------- 早安大字 ---------- */
-.morning-text {
-    font-family: var(--font-morning, var(--font-song));
-    font-size: 62px;
-    font-weight: var(--morning-weight, 400);
-    letter-spacing: var(--morning-spacing, 6px);
-    line-height: 1.15;
-    color: var(--gold);
+/* ---------- 早安大字（PNG 图片，无字体依赖）---------- */
+.morning-img {
+    height: 62px;
+    width: auto;
+    display: block;
+    /* 图片内已含古金色 #C8A050 */
+}
+/* 单字图默认隐藏，模板 D 才显示 */
+.morning-char {
+    display: none;
+    height: 52px;
+    width: auto;
 }
 
 /* ---------- 祝福语 ---------- */
@@ -351,7 +350,7 @@ body {
     position: relative;
 }
 .blessing-text {
-    font-family: var(--font-blessing, var(--font-kai));
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     font-size: var(--blessing-size, 17px);
     font-weight: var(--blessing-weight, 400);
     line-height: 2.0;
@@ -378,7 +377,7 @@ body {
     width: 100%;
     max-width: 280px;
     min-height: 60px;
-    font-family: var(--font-blessing, var(--font-kai));
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     font-size: var(--blessing-size, 17px);
     font-weight: var(--blessing-weight, 400);
     line-height: 2.0;
@@ -476,8 +475,7 @@ body {
     padding-top: 20px;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
 }
-.poster.template-b .morning-text { font-size: 56px; }
-.poster.template-b .blessing-text { font-size: 16px; }
+.poster.template-b .morning-img { height: 56px; }
 
 
 /* ============================================================
@@ -511,8 +509,8 @@ body {
 .poster.template-c .poster-date {
     color: rgba(255,255,255,0.8);
 }
-.poster.template-c .morning-text {
-    color: var(--gold-light);
+.poster.template-c .morning-img {
+    filter: brightness(1.25);   /* 金色在深色背景上更亮 */
 }
 .poster.template-c .blessing-text {
     color: rgba(255,255,255,0.9);
@@ -629,7 +627,6 @@ body {
     position: absolute;
     left: 12%;
     bottom: 8%;
-    writing-mode: horizontal-tb;   /* 恢复横排 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -637,18 +634,13 @@ body {
     margin-bottom: 0;
 }
 .poster.template-d .poster-morning::before { display: none; }
-.poster.template-d .m-char {
+/* 模板 D 隐藏组合图，显示单字图 */
+.poster.template-d .morning-img { display: none; }
+.poster.template-d .morning-char {
     display: block;
-    font-family: var(--font-morning, var(--font-song));
-    font-size: 52px;
-    font-weight: var(--morning-weight, 400);
-    color: #4A3828;
-    line-height: 1.0;
-    letter-spacing: 0;
-}
-.poster.template-d .morning-text {
-    /* 覆盖默认的 morning-text 样式，继承到 m-char */
-    letter-spacing: 0;
+    height: 52px;
+    width: auto;
+    filter: brightness(0.4) sepia(0.5);   /* 金→深棕 #4A3828 */
 }
 
 /* --- 祝福语：右下方 --- */
@@ -672,20 +664,20 @@ body {
 
 @media (max-width: 374px) {
     .poster.template-d .date-day { font-size: 32px; }
-    .poster.template-d .m-char { font-size: 44px; }
+    .poster.template-d .morning-char { height: 38px; }
     .poster.template-d .blessing-text { font-size: 15px; line-height: 1.9; }
 }
 
 
 /* ============================================================
-   字体预设 — 6 套手写体微调
+   字体预设 — 6 套手写体（间距微调用于模板 D 单字间 gap）
    ============================================================ */
-.poster.font-mashan .morning-text   { line-height: 1.1; }
-.poster.font-kuaile .morning-text   { line-height: 1.15; }
-.poster.font-zhimang .morning-text  { line-height: 1.05; }
-.poster.font-liujian .morning-text  { line-height: 1.0; }
-.poster.font-longcang .morning-text { line-height: 1.05; }
-.poster.font-xiaowei .morning-text  { line-height: 1.1; }
+.poster.font-mashan .poster-morning   { gap: 8px; }
+.poster.font-kuaile .poster-morning   { gap: 6px; }
+.poster.font-zhimang .poster-morning  { gap: 4px; }
+.poster.font-liujian .poster-morning  { gap: 2px; }
+.poster.font-longcang .poster-morning { gap: 12px; }
+.poster.font-xiaowei .poster-morning  { gap: 10px; }
 
 
 /* ============================================================
@@ -793,10 +785,10 @@ body {
     }
     .btn-tool { font-size: 12px; padding: 6px 10px; }
     .top-toolbar { gap: 5px; }
-    .morning-text { font-size: 50px; letter-spacing: 4px; }
+    .morning-img { height: 50px; }
     .blessing-text { font-size: 16px; }
-    .poster.template-c .morning-text { font-size: 50px; }
-    .poster.template-d .morning-text { font-size: 38px; letter-spacing: 10px; }
+    .poster.template-c .morning-img { height: 50px; }
+    .poster.template-d .morning-char { height: 44px; }
     .poster.template-d .blessing-text { font-size: 15px; line-height: 1.9; }
 }
 
@@ -804,5 +796,5 @@ body {
     body { align-items: center; padding: 24px 0 40px; }
     .poster-wrapper { border-radius: 20px; max-width: 400px; }
     .btn-tool { font-size: 14px; padding: 8px 16px; }
-    .morning-text { font-size: 68px; }
+    .morning-img { height: 68px; }
 }
