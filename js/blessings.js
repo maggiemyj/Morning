@@ -1,6 +1,6 @@
 /* ============================================================
    祝福语库 — 温暖/吉祥/健康主题，面向老年群体
-   内置 135 条，支持 localStorage 自定义
+   内置 235 条，随机展示，支持 localStorage 自定义
    ============================================================ */
 
 const BLESSINGS = [
@@ -52,7 +52,7 @@ const BLESSINGS = [
     '秋高气爽，正是锻炼好时节，早安！',
 
     // ================================================================
-    // 新增 100 条
+    // 已有新增 100 条
     // ================================================================
 
     // --- 温暖关怀（15 条）---
@@ -168,54 +168,179 @@ const BLESSINGS = [
     '岁月极美，在于它必然的流逝，早安，珍惜当下！',
     '心若向阳，无谓悲伤，早安！',
     '人生如逆旅，我亦是行人，早安，且行且珍惜！',
+
+    // ================================================================
+    // 本次新增 100 条
+    // ================================================================
+
+    // --- 日常问候（10 条）---
+    '睁开眼，又是美好的一天，早安，愿你神清气爽！',
+    '一声早安，一份牵挂，愿你今天一切顺利！',
+    '清晨的空气最清新，早起深呼吸，一天都精神，早安！',
+    '日出东方，又是崭新的一天，早安，加油！',
+    '早安，愿你的一天从微笑开始，以好梦结束！',
+    '窗外阳光正好，愿你心情如天气般爽朗，早安！',
+    '晨光熹微，万物苏醒，早安，愿你活力满满！',
+    '迎着朝阳说声早，愿你今天无忧无虑！',
+    '天亮了，鸟叫了，新的一天开始了，早安！',
+    '拉开窗帘，阳光扑面，早安，生活真美好！',
+
+    // --- 健康提醒（10 条）---
+    '晨起一杯水，清肠又润肺，早安，健康每一天！',
+    '早餐要吃好，营养不能少，早安，善待自己！',
+    '天冷泡泡脚，睡觉更踏实，早安，注意保暖！',
+    '少看手机多走走，眼睛颈椎都需要休息，早安！',
+    '早晚温差大，出门带件外套，早安，别着凉！',
+    '按时吃药别忘记，身体是自己的，早安！',
+    '多吃青菜少吃肉，粗粮杂豆最养人，早安！',
+    '坐久了站起来活动一下，筋骨需要舒展，早安！',
+    '午觉别睡太久，半小时刚刚好，早安！',
+    '晚上少喝水睡得香，早安，今天注意哦！',
+
+    // --- 天伦之乐（10 条）---
+    '儿孙自有儿孙福，你只管健康快乐，早安！',
+    '儿女平安就是最大的福气，早安，放宽心！',
+    '孙子上学了，家里清静了，享受二人世界，早安！',
+    '孩子们在外打拼不容易，你的健康就是对他们最大的支持，早安！',
+    '周末儿女回家吃饭，想想就开心，早安！',
+    '一家老小整整齐齐，这就是天大的福分，早安！',
+    '看着孙辈一天天长大，心里比蜜还甜，早安！',
+    '儿女孝顺，老伴体贴，这日子还有什么不知足的，早安！',
+    '给远方的孩子发个早安问候，温暖彼此的心！',
+    '一家人平平安安，比什么都重要，早安！',
+
+    // --- 人生感悟（10 条）---
+    '人这一生，健健康康就是赢家，早安！',
+    '年轻时拼事业，年老时拼健康，早安，你哪个阶段都很精彩！',
+    '生活不是赶路，而是感受路，早安，慢慢走！',
+    '人比人气死人，跟自己比就好，早安！',
+    '一辈子不长，做自己喜欢的事，早安！',
+    '过去的让它过去，未来的还没来，珍惜当下，早安！',
+    '你走过的路都算数，吃过的苦都值得，早安！',
+    '日子过得去就行，不用太较真，早安，难得糊涂！',
+    '这世上最好的长寿药就是好心态，早安！',
+    '人到老年万事休，唯有健康不能丢，早安！',
+
+    // --- 季节风光（10 条）---
+    '草长莺飞二月天，拂堤杨柳醉春烟，早安！',
+    '映日荷花别样红，夏日清晨最清爽，早安！',
+    '停车坐爱枫林晚，霜叶红于二月花，早安！',
+    '忽如一夜春风来，千树万树梨花开，早安！',
+    '小荷才露尖尖角，早有蜻蜓立上头，早安，夏日好时光！',
+    '采菊东篱下，悠然见南山，早安，秋日好心情！',
+    '墙角数枝梅，凌寒独自开，早安，冬日有诗意！',
+    '天街小雨润如酥，草色遥看近却无，早安，春天来了！',
+    '接天莲叶无穷碧，映日荷花别样红，早安，夏日美景！',
+    '一年好景君须记，最是橙黄橘绿时，早安！',
+
+    // --- 友谊长存（10 条）---
+    '朋友一生一起走，早安，珍惜身边的老友！',
+    '老友如老酒，越久越香醇，早安，常联系！',
+    '人生得一知己足矣，你有几个知心好友，早安！',
+    '远亲不如近邻，好邻居是福气，早安！',
+    '朋友是人生路上最美的风景，早安，感恩有你！',
+    '多年老友胜似亲人，早安，常聚聚！',
+    '人到老年有三两好友，胜过黄金万两，早安！',
+    '微信群里聊聊天，老友圈里点个赞，早安，保持联系！',
+    '知心的话说给懂的人听，早安，朋友懂你！',
+    '一起变老也是种浪漫，和老伴老友一起慢慢走，早安！',
+
+    // --- 美好祝愿（10 条）---
+    '愿你笑口常开，青春永驻，早安！',
+    '祝你福如东海，寿比南山，早安吉祥！',
+    '愿你心想事成，万事如意，早安！',
+    '祝你阖家幸福，其乐融融，早安！',
+    '愿你财源广进，福气绵长，早安！',
+    '祝你好运当头，喜事连连，早安！',
+    '愿你岁岁平安，年年有余，早安！',
+    '祝你生活美满，日子红火，早安！',
+    '愿你无忧无虑，自在逍遥，早安！',
+    '祝你子孙满堂，福禄双全，早安！',
+
+    // --- 闲情逸致（10 条）---
+    '泡一壶龙井，听一段评弹，早安，这才是生活！',
+    '笔墨纸砚准备好，今天写几幅字，早安！',
+    '阳台上的茉莉开了，满屋飘香，早安，心情真好！',
+    '退休金到账了，约老友下馆子，早安，改善伙食！',
+    '早市上买了新鲜的鱼，今天炖汤喝，早安！',
+    '收拾收拾院子，种种菜浇浇花，早安，田园生活！',
+    '收音机里放着老歌，跟着哼两句，早安，心情舒畅！',
+    '翻出相册看看老照片，那是我们的青春啊，早安！',
+    '老年大学今天有书法课，活到老学到老，早安！',
+    '河边散步吹吹风，看看钓鱼的人，早安，悠闲自在！',
+
+    // --- 知足常乐（10 条）---
+    '知足的人最富有，感恩的人最幸福，早安！',
+    '比上不足比下有余，这就够了，早安！',
+    '不攀比不羡慕，过好自己的小日子，早安！',
+    '健康就是存款，快乐就是利息，早安，你两者都有！',
+    '心宽一寸，路宽一丈，早安，想开点！',
+    '有钱没钱，平安就好，早安，知足常乐！',
+    '不求大富大贵，只求平平安安，早安！',
+    '粗茶淡饭也是福，健健康康过一生，早安！',
+    '人这一辈子，想开了就是天堂，早安！',
+    '简简单单过，开开心心活，这就是智慧，早安！',
+
+    // --- 岁月静好（10 条）---
+    '时光不老，我们不散，早安，珍惜每一天！',
+    '白发是岁月的勋章，皱纹是智慧的印记，早安！',
+    '慢慢变老也是种优雅，早安，从容面对每一天！',
+    '岁月的沉淀让人更有味道，早安，你越来越好了！',
+    '与其感叹岁月无情，不如享受当下时光，早安！',
+    '老去的是容颜，不老的是心态，早安，永远年轻！',
+    '时光如流水，珍惜眼前人，早安！',
+    '回首往事不遗憾，展望未来不畏惧，早安！',
+    '人生每个阶段都有独特的美，早安，享受当下！',
+    '岁月教会我们一件事：好好爱自己，早安！',
 ];
 
 /**
- * 祝福语管理器
+ * 祝福语管理器 — 随机展示
  */
 const BlessingManager = {
     _storageKey: 'zaoan_blessing_config',
-    _customKey: 'zaoan_blessing_custom',       // 用户手动输入的祝福语
-    _customListKey: 'zaoan_blessing_custom_list', // 用户自定义祝福语列表
+    _customKey: 'zaoan_blessing_custom',
+    _customListKey: 'zaoan_blessing_custom_list',
 
     /**
-     * 获取今天的祝福语索引
+     * 获取当前祝福语（随机选取，新的一天自动更换）
      */
-    getTodayIndex() {
-        const today = this._getDateKey();
-        const config = this._loadConfig();
-
-        if (config.dateKey !== today) {
-            const nextIndex = (config.lastDailyIndex + 1) % BLESSINGS.length;
-            this._saveConfig({
-                dateKey: today,
-                lastDailyIndex: nextIndex,
-                currentIndex: nextIndex,
-                isCustom: false,
-            });
-            return nextIndex;
-        }
-        return config.currentIndex;
-    },
-
-    /** 获取当前祝福语（含用户自定义） */
     getCurrent() {
         const config = this._loadConfig();
         if (config.isCustom && config.customText) {
             return config.customText;
         }
-        return BLESSINGS[this.getTodayIndex()];
+        return BLESSINGS[this._getTodayIndex()];
     },
 
-    /** 切换到下一条 */
+    /**
+     * 获取今天的祝福语索引（新的一天随机选一条）
+     */
+    _getTodayIndex() {
+        const today = this._getDateKey();
+        const config = this._loadConfig();
+
+        if (config.dateKey !== today) {
+            // 新的一天，随机选一条与昨天不同的
+            const newIndex = this._randomIndex(config.currentIndex);
+            this._saveConfig({
+                dateKey: today,
+                currentIndex: newIndex,
+                isCustom: false,
+            });
+            return newIndex;
+        }
+        return config.currentIndex;
+    },
+
+    /** 切换到下一条（随机切换，尽量不与当前重复） */
     switchToNext() {
         const today = this._getDateKey();
         const config = this._loadConfig();
-        const nextIndex = (config.currentIndex + 1) % BLESSINGS.length;
+        const nextIndex = this._randomIndex(config.currentIndex);
 
         this._saveConfig({
             dateKey: today,
-            lastDailyIndex: config.lastDailyIndex,
             currentIndex: nextIndex,
             isCustom: false,
             customText: null,
@@ -230,7 +355,6 @@ const BlessingManager = {
         const config = this._loadConfig();
         this._saveConfig({
             dateKey: today,
-            lastDailyIndex: config.lastDailyIndex,
             currentIndex: config.currentIndex,
             isCustom: true,
             customText: text.trim(),
@@ -244,7 +368,6 @@ const BlessingManager = {
         const config = this._loadConfig();
         this._saveConfig({
             dateKey: today,
-            lastDailyIndex: config.lastDailyIndex,
             currentIndex: config.currentIndex,
             isCustom: false,
             customText: null,
@@ -261,9 +384,6 @@ const BlessingManager = {
     /** 获取总条数 */
     getTotal() { return BLESSINGS.length; },
 
-    /** 当前是第几条 */
-    getCurrentPosition() { return this.getTodayIndex() + 1; },
-
     /* -------- 内部 -------- */
     _getDateKey() {
         const d = new Date();
@@ -275,11 +395,24 @@ const BlessingManager = {
             const raw = localStorage.getItem(this._storageKey);
             if (raw) return JSON.parse(raw);
         } catch (_) {}
-        return { dateKey: '', lastDailyIndex: -1, currentIndex: 0, isCustom: false, customText: null };
+        return { dateKey: '', currentIndex: 0, isCustom: false, customText: null };
     },
 
     _saveConfig(config) {
         try { localStorage.setItem(this._storageKey, JSON.stringify(config)); }
         catch (_) {}
+    },
+
+    /** 随机选一条，尽量与 excludeIndex 不同 */
+    _randomIndex(excludeIndex) {
+        if (BLESSINGS.length <= 1) return 0;
+        if (BLESSINGS.length === 2) {
+            return excludeIndex === 0 ? 1 : 0;
+        }
+        let idx;
+        do {
+            idx = Math.floor(Math.random() * BLESSINGS.length);
+        } while (idx === excludeIndex);
+        return idx;
     },
 };

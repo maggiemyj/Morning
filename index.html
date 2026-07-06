@@ -8,6 +8,11 @@
     <title>早安海报</title>
 
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Google Fonts: 5 款中文手写体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -27,11 +32,13 @@
         <div class="poster-wrapper" id="posterWrapper">
             <div class="poster" id="poster">
 
-                <!-- 图片区（上方）— 用 div + background-image，html2canvas 渲染更可靠 -->
-                <div class="poster-image-zone">
+                <!-- 图片区（上方） -->
+                <div class="poster-image-zone" id="posterImageZone">
                     <img class="poster-image" id="posterImage" src="" alt="背景图">
                     <!-- 图片加载中 -->
                     <div class="poster-image-loading" id="posterImageLoading">加载中…</div>
+                    <!-- 拖拽定位重置按钮 -->
+                    <button class="crop-reset-btn" id="cropResetBtn" title="恢复居中">↺</button>
                 </div>
 
                 <!-- 信息区（下方） -->
@@ -114,6 +121,7 @@
     <script src="js/weather.js"></script>
     <script src="js/fonts.js"></script>
     <script src="js/templates.js"></script>
+    <script src="js/image-crop.js"></script>
     <script src="js/share.js"></script>
     <script src="js/app.js"></script>
 

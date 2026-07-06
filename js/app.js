@@ -74,12 +74,14 @@
             const uploaded = this._getUploaded();
             if (uploaded) {
                 this._setImage(uploaded);
+                ImageCropController.enable();       // 上传图片启用拖拽
                 return;
             }
 
             const todayIdx = this._getTodayPoolIndex();
             const url = UNSPLASH_POOL[todayIdx];
             this._setImage(url);
+            ImageCropController.disable();          // Unsplash 禁用拖拽
             this._saveCache({ url, index: todayIdx, date: this._todayKey() });
         },
 
@@ -112,6 +114,7 @@
                 this._setImage(pick.url);
                 this._saveCache({ url: pick.url, index: pick.i, date: this._todayKey() });
                 this._clearUploaded();
+                ImageCropController.disable();      // 切回 Unsplash，禁用拖拽
                 Toast.show('✅ 背景已更新');
             } else {
                 this._failedUrls.push(pick.url);
@@ -135,6 +138,7 @@
                 const dataUrl = e.target.result;
                 this._setImage(dataUrl);
                 this._saveUploaded(dataUrl);
+                ImageCropController.enable();       // 启用拖拽定位
                 Toast.show('✅ 背景已更换');
             };
             reader.onerror = () => Toast.show('图片读取失败');
@@ -218,6 +222,7 @@
         _clearUploaded() {
             try { localStorage.removeItem(this._uploadStorageKey); }
             catch (_) {}
+            ImageCropController._clearPosition();
         },
     };
 

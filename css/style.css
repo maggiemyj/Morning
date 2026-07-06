@@ -19,9 +19,12 @@
     --border:       #E8E3DB;
 
     --radius:      16px;
-    --font-base:   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    --font-song:   "Noto Serif SC", "STSong", "SimSun", "Songti SC", serif;
-    --font-kai:    "STKaiti", "KaiTi", "Kaiti SC", serif;
+    --font-base:      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    --font-morning:   "Ma Shan Zheng", cursive, serif;
+    --font-blessing:  "ZCOOL KuaiLe", cursive, sans-serif;
+    /* 以下为 fallback 变量，供 var() 嵌套回退使用 */
+    --font-song:      "Ma Shan Zheng", cursive, serif;
+    --font-kai:       "ZCOOL KuaiLe", cursive, sans-serif;
 }
 
 /* ---------- 全局 ---------- */
@@ -166,6 +169,7 @@ body {
     inset: 0;
     overflow: hidden;
     background: var(--paper);
+    border-radius: var(--radius);
 }
 
 /* ============================================================
@@ -180,13 +184,61 @@ body {
 }
 
 .poster-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: none;
     display: block;
     transition: opacity 0.4s ease;
+    /* width / height 由 JS 根据 cover 算法动态设置 */
+    /* transform 由 JS 根据拖拽位置动态设置 */
 }
 .poster-image.loading { opacity: 0.3; }
+
+/* 上传图片可拖拽定位 */
+.poster-image-zone.croppable .poster-image {
+    cursor: grab;
+}
+.poster-image-zone.croppable.dragging .poster-image {
+    cursor: grabbing;
+    transition: none !important;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 拖拽重置按钮 */
+.crop-reset-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 4;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    font-size: 16px;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.crop-reset-btn.visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+.crop-reset-btn:active {
+    background: rgba(0,0,0,0.55);
+    transform: scale(0.9);
+}
 
 .poster-image-loading {
     position: absolute;
@@ -624,15 +676,14 @@ body {
 
 
 /* ============================================================
-   字体预设 — 6 套手写/书法风格
+   字体预设 — 6 套手写体微调
    ============================================================ */
-.poster.font-song .morning-text { line-height: 1.1; }
-.poster.font-kai .morning-text { line-height: 1.05; }
-.poster.font-kai .blessing-text { line-height: 1.9; }
-.poster.font-modern .morning-text { line-height: 1.05; }
-.poster.font-classic .morning-text { line-height: 1.15; }
-.poster.font-warm .morning-text { line-height: 1.1; }
-.poster.font-elegant .morning-text { line-height: 1.1; }
+.poster.font-mashan .morning-text   { line-height: 1.1; }
+.poster.font-kuaile .morning-text   { line-height: 1.15; }
+.poster.font-zhimang .morning-text  { line-height: 1.05; }
+.poster.font-liujian .morning-text  { line-height: 1.0; }
+.poster.font-longcang .morning-text { line-height: 1.05; }
+.poster.font-xiaowei .morning-text  { line-height: 1.1; }
 
 
 /* ============================================================
