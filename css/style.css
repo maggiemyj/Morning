@@ -196,13 +196,15 @@ body {
 .poster-image.loading { opacity: 0.3; }
 
 /* 上传图片可拖拽定位 */
+.poster-image-zone.croppable {
+    touch-action: none;           /* 禁止浏览器拦截触摸用于滚动 */
+}
 .poster-image-zone.croppable .poster-image {
     cursor: grab;
 }
 .poster-image-zone.croppable.dragging .poster-image {
     cursor: grabbing;
     transition: none !important;
-    touch-action: none;
     user-select: none;
     -webkit-user-select: none;
 }
