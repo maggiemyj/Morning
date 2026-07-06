@@ -2,6 +2,7 @@
    图片拖拽定位控制器 — ImageCropController
    上传的图片可通过拖拽调整可见区域
    使用 transform 定位（html2canvas 兼容），Pointer Events 统一交互
+   监听 poster 元素以穿透各模板的 z-index 层级问题
    ============================================================ */
 
 const ImageCropController = {
@@ -15,8 +16,8 @@ const ImageCropController = {
     _startPosY: 50,
 
     // cover 布局缓存
-    _rangeX: 0,       // 图片超出容器的水平像素
-    _rangeY: 0,       // 图片超出容器的垂直像素
+    _rangeX: 0,
+    _rangeY: 0,
     _displayW: 0,
     _displayH: 0,
     _layoutReady: false,
@@ -33,12 +34,14 @@ const ImageCropController = {
         this._loadPosition();
 
         const zone = document.getElementById('posterImageZone');
-        if (zone) {
-            zone.classList.add('croppable');
-            zone.addEventListener('pointerdown', this._onPointerDown);
+        if (zone) zone.classList.add('croppable');
+
+        // 绑定到 poster 上（而非 image-zone），避免被 info-zone 的 z-index 遮挡
+        const poster = document.getElementById('poster');
+        if (poster) {
+            poster.addEventListener('pointerdown', this._onPointerDown);
         }
 
-        // 图片加载完成后计算布局
         this._initLayout();
     },
 
@@ -51,9 +54,11 @@ const ImageCropController = {
         this.reset(false);
 
         const zone = document.getElementById('posterImageZone');
-        if (zone) {
-            zone.classList.remove('croppable', 'dragging');
-            zone.removeEventListener('pointerdown', this._onPointerDown);
+        if (zone) zone.classList.remove('croppable', 'dragging');
+
+        const poster = document.getElementById('poster');
+        if (poster) {
+            poster.removeEventListener('pointerdown', this._onPointerDown);
         }
 
         this._hideResetBtn();
@@ -72,7 +77,6 @@ const ImageCropController = {
         }
     },
 
-    /** 获取当前位置 */
     getPosition() {
         return { x: this._posX, y: this._posY };
     },
@@ -81,9 +85,6 @@ const ImageCropController = {
        布局计算 — 模拟 object-fit: cover
        ================================================================ */
 
-    /**
-     * 等待图片加载完成 → 计算 cover 尺寸
-     */
     _initLayout() {
         const img = document.getElementById('posterImage');
         if (!img) return;
@@ -100,9 +101,6 @@ const ImageCropController = {
         }
     },
 
-    /**
-     * 计算 cover 缩放后的尺寸，以及可拖拽的像素范围
-     */
     _calcLayout() {
         const img = document.getElementById('posterImage');
         const zone = document.getElementById('posterImageZone');
@@ -115,7 +113,6 @@ const ImageCropController = {
 
         if (cW === 0 || cH === 0 || iW === 0 || iH === 0) return;
 
-        // object-fit: cover 算法 — 取最大缩放比
         const scale = Math.max(cW / iW, cH / iH);
         this._displayW = Math.round(iW * scale);
         this._displayH = Math.round(iH * scale);
@@ -123,7 +120,6 @@ const ImageCropController = {
         this._rangeY = this._displayH - cH;
         this._layoutReady = true;
 
-        // 设置图片元素尺寸
         img.style.width = this._displayW + 'px';
         img.style.height = this._displayH + 'px';
     },
@@ -132,12 +128,6 @@ const ImageCropController = {
        位置应用
        ================================================================ */
 
-    /**
-     * 将百分比位置转换为 transform: translate()
-     * pos=0   → 图片左/上边缘对齐容器 → translate(0, 0)
-     * pos=50  → 居中 → translate(-range/2, -range/2)
-     * pos=100 → 图片右/下边缘对齐容器 → translate(-range, -range)
-     */
     _applyPosition() {
         const img = document.getElementById('posterImage');
         if (!img || !this._layoutReady) {
@@ -149,12 +139,9 @@ const ImageCropController = {
         const ty = -(this._rangeY * this._posY / 100);
 
         img.style.transform = `translate(${tx}px, ${ty}px)`;
-        img.style.objectPosition = '';  // 清除 fallback
+        img.style.objectPosition = '';
     },
 
-    /**
-     * Fallback: 布局未就绪时使用 object-position
-     */
     _applyObjectPositionFallback() {
         const img = document.getElementById('posterImage');
         if (!img) return;
@@ -202,8 +189,25 @@ const ImageCropController = {
         if (btn) btn.classList.remove('visible');
     },
 
+    /**
+     * 判断指针是否落在图片区域内
+     */
+    _isInsideImageZone(e) {
+        const zone = document.getElementById('posterImageZone');
+        if (!zone) return false;
+        const rect = zone.getBoundingClientRect();
+        return (
+            e.clientX >= rect.left &&
+            e.clientX <= rect.right &&
+            e.clientY >= rect.top &&
+            e.clientY <= rect.bottom
+        );
+    },
+
     /* ================================================================
        拖拽事件处理（Pointer Events）
+       pointerdown → poster（穿透 z-index）
+       pointermove / pointerup → document
        ================================================================ */
 
     _onPointerDown: null,
@@ -213,10 +217,15 @@ const ImageCropController = {
     _handlePointerDown(e) {
         if (!this._enabled) return;
 
+        // 只响应图片区域内的触摸
+        if (!this._isInsideImageZone(e)) return;
+
+        // 不拦截重置按钮
+        if (e.target && e.target.id === 'cropResetBtn') return;
+
         const img = document.getElementById('posterImage');
         if (!img || !img.complete || img.classList.contains('loading')) return;
 
-        // 确保布局是最新的
         this._calcLayout();
 
         this._dragging = true;
@@ -249,8 +258,6 @@ const ImageCropController = {
         const dx = e.clientX - this._startX;
         const dy = e.clientY - this._startY;
 
-        // 像素位移 → 百分比变化
-        // 拖拽一整格容器宽度 = 100% position 变化
         this._posX = Math.max(0, Math.min(100,
             this._startPosX + (dx / containerW) * 100));
         this._posY = Math.max(0, Math.min(100,
@@ -316,12 +323,11 @@ const ImageCropController = {
         }
     });
 
-    // 监听 poster 的 class 变化（模板切换）
+    // 监听 poster class 变化（模板切换）
     const poster = document.getElementById('poster');
     if (poster) {
         new MutationObserver(() => {
             if (ImageCropController._enabled) {
-                // 延迟等 CSS 过渡完成
                 setTimeout(() => {
                     ImageCropController._calcLayout();
                     ImageCropController._applyPosition();
