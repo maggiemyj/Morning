@@ -1,75 +1,45 @@
 /* ============================================================
-   字体预设管理器 — 6 套纯系统字体
-   宋体·楷体·黑体各有鲜明个性，无需加载任何 web font
+   字体预设管理器 — 6 套手写体「早安」PNG 图片
+   预渲染 PNG，无外部字体依赖，每个 2-16KB
    每天自动轮换，也可手动切换
    ============================================================ */
 
 const FONT_PRESETS = [
     {
-        id: 'song',
-        name: '宋韵',
-        desc: '宋体大字，古朴典雅',
-        morning: '"STSong", "SimSun", "Songti SC", "Noto Serif SC", serif',
-        blessing: '"STKaiti", "KaiTi", "Kaiti SC", serif',
-        morningWeight: '700',
-        morningSpacing: '10px',
-        blessingSize: '20px',
-        blessingWeight: '400',
-    },
-    {
-        id: 'kai',
-        name: '楷风',
-        desc: '楷体大字，温润亲切',
-        morning: '"STKaiti", "KaiTi", "Kaiti SC", serif',
-        blessing: '"STSong", "SimSun", "Songti SC", serif',
-        morningWeight: '600',
-        morningSpacing: '6px',
-        blessingSize: '20px',
-        blessingWeight: '400',
-    },
-    {
-        id: 'modern',
-        name: '清黑',
-        desc: '细黑体，简约时尚',
-        morning: '"PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Heiti SC", "SimHei", sans-serif',
-        blessing: '"STKaiti", "KaiTi", "Kaiti SC", serif',
-        morningWeight: '300',
-        morningSpacing: '12px',
-        blessingSize: '19px',
-        blessingWeight: '400',
-    },
-    {
-        id: 'classic',
-        name: '浑黑',
-        desc: '粗黑体，沉稳有力',
-        morning: '"PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Heiti SC", "SimHei", sans-serif',
-        blessing: '"STSong", "SimSun", "Songti SC", serif',
-        morningWeight: '700',
-        morningSpacing: '4px',
-        blessingSize: '18px',
-        blessingWeight: '300',
-    },
-    {
-        id: 'warm',
-        name: '宋墨',
-        desc: '细宋体，清雅脱俗',
-        morning: '"STSong", "SimSun", "Songti SC", "Noto Serif SC", serif',
-        blessing: '"PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif',
-        morningWeight: '400',
-        morningSpacing: '14px',
-        blessingSize: '18px',
-        blessingWeight: '300',
-    },
-    {
-        id: 'elegant',
-        name: '楷墨',
-        desc: '楷体配黑体，刚柔并济',
-        morning: '"STKaiti", "KaiTi", "Kaiti SC", serif',
-        blessing: '"PingFang SC", "Microsoft YaHei", "Heiti SC", "SimHei", sans-serif',
-        morningWeight: '400',
+        id: 'mashan',
+        name: '马山正',
+        desc: '毛笔楷书，浑厚有力',
         morningSpacing: '8px',
-        blessingSize: '19px',
-        blessingWeight: '400',
+    },
+    {
+        id: 'kuaile',
+        name: '站酷快乐',
+        desc: '圆润可爱，轻松活泼',
+        morningSpacing: '6px',
+    },
+    {
+        id: 'zhimang',
+        name: '致莽星',
+        desc: '行草飘逸，一气呵成',
+        morningSpacing: '6px',
+    },
+    {
+        id: 'liujian',
+        name: '柳建毛草',
+        desc: '狂草奔放，艺术感强',
+        morningSpacing: '2px',
+    },
+    {
+        id: 'longcang',
+        name: '龙藏',
+        desc: '随性手写，亲切温暖',
+        morningSpacing: '12px',
+    },
+    {
+        id: 'xiaowei',
+        name: '站酷小薇',
+        desc: '娟秀细腻，温婉雅致',
+        morningSpacing: '10px',
     },
 ];
 
@@ -103,21 +73,33 @@ const FontManager = {
         return this.getPreset();
     },
 
+    /**
+     * 应用预设：切换「早安」PNG 图片 + CSS 变量
+     */
     apply() {
         const preset = this.getPreset();
         const poster = document.getElementById('poster');
         if (!poster) return preset;
 
+        // 更新 CSS class
         FONT_PRESETS.forEach(p => poster.classList.remove('font-' + p.id));
         poster.classList.add('font-' + preset.id);
 
+        // 更新早安图片 src（组合图 + 单字图）
+        const basePath = 'assets/fonts/' + preset.id;
+        const combinedImg = document.getElementById('morningImg');
+        const charZao = document.getElementById('morningCharZao');
+        const charAn = document.getElementById('morningCharAn');
+        if (combinedImg) combinedImg.src = basePath + '.png';
+        if (charZao) charZao.src = basePath + '_zao.png';
+        if (charAn) charAn.src = basePath + '_an.png';
+
+        // 保留间距 CSS 变量（影响图片间 gap）
         const s = poster.style;
-        s.setProperty('--font-morning', preset.morning);
-        s.setProperty('--font-blessing', preset.blessing);
-        s.setProperty('--morning-weight', preset.morningWeight);
+        s.setProperty('--morning-weight', '400');
         s.setProperty('--morning-spacing', preset.morningSpacing);
-        s.setProperty('--blessing-size', preset.blessingSize);
-        s.setProperty('--blessing-weight', preset.blessingWeight);
+        s.setProperty('--blessing-size', '17px');
+        s.setProperty('--blessing-weight', '400');
 
         return preset;
     },

@@ -27,11 +27,13 @@
         <div class="poster-wrapper" id="posterWrapper">
             <div class="poster" id="poster">
 
-                <!-- 图片区（上方）— 用 div + background-image，html2canvas 渲染更可靠 -->
-                <div class="poster-image-zone">
+                <!-- 图片区（上方） -->
+                <div class="poster-image-zone" id="posterImageZone">
                     <img class="poster-image" id="posterImage" src="" alt="背景图">
                     <!-- 图片加载中 -->
                     <div class="poster-image-loading" id="posterImageLoading">加载中…</div>
+                    <!-- 拖拽定位重置按钮 -->
+                    <button class="crop-reset-btn" id="cropResetBtn" title="恢复居中">↺</button>
                 </div>
 
                 <!-- 信息区（下方） -->
@@ -49,9 +51,11 @@
                             2026年7月3日 星期五
                         </div>
 
-                        <!-- 早安大字 -->
+                        <!-- 早安大字（预渲染PNG，无需加载字体） -->
                         <div class="poster-morning">
-                            <span class="morning-text"><span class="m-char">早</span> <span class="m-char">安</span></span>
+                            <img class="morning-img" id="morningImg" src="assets/fonts/mashan.png" alt="早安">
+                            <img class="morning-char morning-char-zao" id="morningCharZao" src="assets/fonts/mashan_zao.png" alt="早">
+                            <img class="morning-char morning-char-an" id="morningCharAn" src="assets/fonts/mashan_an.png" alt="安">
                         </div>
 
                         <!-- 祝福语（可点击编辑） -->
@@ -114,6 +118,7 @@
     <script src="js/weather.js"></script>
     <script src="js/fonts.js"></script>
     <script src="js/templates.js"></script>
+    <script src="js/image-crop.js"></script>
     <script src="js/share.js"></script>
     <script src="js/app.js"></script>
 

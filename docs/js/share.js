@@ -13,6 +13,7 @@ const ShareManager = {
     /** 输出配置：scale=2→750x1000px，JPEG 质量 0.88→~200KB */
     _EXPORT_SCALE: 2,
     _JPEG_QUALITY: 0.88,
+    _BORDER_RADIUS: 16,   // 海报圆角半径（px，CSS 侧为 16px）
 
     /**
      * 按需加载 html2canvas，避免 CDN 阻塞首屏
@@ -48,23 +49,51 @@ const ShareManager = {
         return this._h2cPromise;
     },
 
-    /** 渲染海报为 canvas */
+    /** 渲染海报为 canvas（含圆角裁剪） */
     async _renderCanvas() {
         const posterEl = document.getElementById('poster');
         if (!posterEl) throw new Error('海报元素未找到');
 
         await this._loadHtml2canvas();
-        return html2canvas(posterEl, {
+        const rawCanvas = await html2canvas(posterEl, {
             useCORS: true,
             allowTaint: true,
             scale: this._EXPORT_SCALE,
-            backgroundColor: '#FAF8F5',   // JPEG 无透明通道，用海报底色填充
+            backgroundColor: null,          // 透明，圆角区域由后续裁剪处理
             logging: false,
         });
+
+        // 圆角裁剪
+        const radius = this._BORDER_RADIUS * this._EXPORT_SCALE;
+        const w = rawCanvas.width;
+        const h = rawCanvas.height;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+
+        // 使用 roundRect（现代浏览器均支持）做圆角裁剪
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(0, 0, w, h, radius);
+        } else {
+            // 兜底：arcTo 路径
+            ctx.moveTo(radius, 0);
+            ctx.arcTo(w, 0, w, radius, radius);
+            ctx.arcTo(w, h, w - radius, h, radius);
+            ctx.arcTo(0, h, 0, h - radius, radius);
+            ctx.arcTo(0, 0, radius, 0, radius);
+            ctx.closePath();
+        }
+        ctx.clip();
+        ctx.drawImage(rawCanvas, 0, 0);
+
+        return canvas;
     },
 
     /**
-     * 保存为 JPEG（体积小，适合微信分享）
+     * 保存为 PNG（支持透明圆角）
      */
     async saveAsImage() {
         Toast.show('正在生成图片…');
@@ -73,8 +102,8 @@ const ShareManager = {
             const canvas = await this._renderCanvas();
 
             const link = document.createElement('a');
-            link.download = `早安海报_${this._getDateStr()}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', this._JPEG_QUALITY);
+            link.download = `早安海报_${this._getDateStr()}.png`;
+            link.href = canvas.toDataURL('image/png');
             link.click();
 
             // 打印文件大小
