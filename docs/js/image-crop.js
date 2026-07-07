@@ -33,9 +33,10 @@ const ImageCropController = {
 
         this._loadPosition();
 
-        // 图片区和图片本身都禁用浏览器触摸手势
+        // 图片区、图片、poster 都禁用浏览器触摸手势
         const zone = document.getElementById('posterImageZone');
         const img = document.getElementById('posterImage');
+        const poster = document.getElementById('poster');
         if (zone) {
             zone.classList.add('croppable');
             zone.style.touchAction = 'none';       // 内联最高优先级
@@ -45,9 +46,11 @@ const ImageCropController = {
             img.style.webkitUserSelect = 'none';
             img.style.userSelect = 'none';
         }
+        if (poster) {
+            poster.style.touchAction = 'none';     // poster 也禁用，防止穿透
+        }
 
         // 绑定到 poster 上（而非 image-zone），避免被 info-zone 的 z-index 遮挡
-        const poster = document.getElementById('poster');
         if (poster) {
             poster.addEventListener('pointerdown', this._onPointerDown);
         }
@@ -65,6 +68,7 @@ const ImageCropController = {
 
         const zone = document.getElementById('posterImageZone');
         const img = document.getElementById('posterImage');
+        const poster = document.getElementById('poster');
         if (zone) {
             zone.classList.remove('croppable', 'dragging');
             zone.style.touchAction = '';
@@ -74,9 +78,8 @@ const ImageCropController = {
             img.style.webkitUserSelect = '';
             img.style.userSelect = '';
         }
-
-        const poster = document.getElementById('poster');
         if (poster) {
+            poster.style.touchAction = '';     // 恢复默认
             poster.removeEventListener('pointerdown', this._onPointerDown);
         }
 

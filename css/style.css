@@ -24,19 +24,27 @@
 
 /* ---------- 全局 ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    overflow: hidden;                /* 禁止整页滚动，避免与图片拖拽冲突 */
+    height: 100%;
+}
 
 body {
     font-family: var(--font-base);
     background: var(--page-bg);
     color: var(--ink);
-    min-height: 100dvh;
+    height: 100dvh;                  /* 固定高度，不超出视口 */
     display: flex;
     justify-content: center;
     align-items: flex-start;
     padding: 12px 0 24px;
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
+    overflow: hidden;                /* 禁止 body 滚动 */
+    overscroll-behavior: none;       /* 禁止橡皮筋/下拉刷新 */
+    touch-action: manipulation;      /* 禁止双击缩放，减少手势冲突 */
 }
 
 .app-container {
@@ -193,6 +201,13 @@ body {
 /* 上传图片可拖拽定位 */
 .poster-image-zone.croppable {
     touch-action: none;           /* 禁止浏览器拦截触摸用于滚动 */
+}
+/* 拖拽模式下锁定整张海报容器，防止触控事件被页面滚动拦截 */
+.poster-wrapper:has(.croppable) {
+    touch-action: none;
+}
+.poster-wrapper:has(.croppable) .poster {
+    touch-action: none;
 }
 .poster-image-zone.croppable .poster-image {
     cursor: grab;
