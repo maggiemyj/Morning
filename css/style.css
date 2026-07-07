@@ -196,6 +196,10 @@ body {
     /* width / height 由 JS 根据 cover 算法动态设置 */
     /* transform 由 JS 根据拖拽位置动态设置 */
 }
+/* 无 src 时隐藏 alt 文字，让渐变背景自然展示 */
+.poster-image:not([src]) {
+    visibility: hidden;
+}
 .poster-image.loading { opacity: 0.3; }
 
 /* 上传图片可拖拽定位 */

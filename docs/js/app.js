@@ -74,28 +74,59 @@
             const uploaded = this._getUploaded();
             if (uploaded) {
                 this._setImageNow(uploaded);
-                ImageCropController.enable();       // 上传图片启用拖拽
+                ImageCropController.enable();
                 return;
             }
 
-            const todayIdx = this._getTodayPoolIndex();
-            const url = UNSPLASH_POOL[todayIdx];
-
-            // 首次加载：先显示加载提示，预加载完成后再展示图片
+            // 首次加载：显示加载提示，预加载 + 失败自动重试其他图
             if (dom.posterImgLoading) dom.posterImgLoading.classList.add('show');
 
-            const loaded = await this._preloadImage(url);
+            const url = await this._pickAndPreload();
+
             if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
 
-            if (loaded) {
-                this._setImageNow(url);
-            } else {
-                // 预加载失败仍然尝试设置（浏览器可能仍能加载）
+            if (url) {
                 this._setImageNow(url);
             }
 
-            ImageCropController.disable();          // Unsplash 禁用拖拽
-            this._saveCache({ url, index: todayIdx, date: this._todayKey() });
+            ImageCropController.disable();
+        },
+
+        /**
+         * 选图 + 预加载：先试今日图片，失败则随机试其他（最多 5 次）
+         * 返回加载成功的 URL，全部失败返回 null
+         */
+        async _pickAndPreload() {
+            const todayIdx = this._getTodayPoolIndex();
+            const todayUrl = UNSPLASH_POOL[todayIdx];
+
+            let loaded = await this._preloadImage(todayUrl);
+            if (loaded) {
+                this._saveCache({ url: todayUrl, index: todayIdx, date: this._todayKey() });
+                return todayUrl;
+            }
+
+            // 今日图失败 — 随机挑其他图重试
+            const others = UNSPLASH_POOL
+                .map((u, i) => ({ url: u, i }))
+                .filter(item => item.i !== todayIdx);
+
+            // Fisher-Yates 洗牌
+            for (let i = others.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [others[i], others[j]] = [others[j], others[i]];
+            }
+
+            const maxRetries = Math.min(5, others.length);
+            for (let i = 0; i < maxRetries; i++) {
+                loaded = await this._preloadImage(others[i].url);
+                if (loaded) {
+                    this._saveCache({ url: others[i].url, index: others[i].i, date: this._todayKey() });
+                    return others[i].url;
+                }
+            }
+
+            return null;  // 全部失败
         },
 
         async changeBingImage() {
