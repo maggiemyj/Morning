@@ -117,7 +117,7 @@
                 [others[i], others[j]] = [others[j], others[i]];
             }
 
-            const maxRetries = Math.min(5, others.length);
+            const maxRetries = Math.min(3, others.length);
             for (let i = 0; i < maxRetries; i++) {
                 loaded = await this._preloadImage(others[i].url);
                 if (loaded) {
@@ -216,7 +216,7 @@
                 const timeout = setTimeout(() => {
                     img.src = '';
                     resolve(false);
-                }, 12000);
+                }, 8000);
 
                 img.onload = () => {
                     clearTimeout(timeout);
