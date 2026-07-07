@@ -78,55 +78,59 @@
                 return;
             }
 
-            // 首次加载：显示加载提示，预加载 + 失败自动重试其他图
-            if (dom.posterImgLoading) dom.posterImgLoading.classList.add('show');
-
-            const url = await this._pickAndPreload();
-
-            if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
-
-            if (url) {
-                this._setImageNow(url);
-            }
-
+            // 直接设 src 开始加载（图边下边显示），失败自动换图重试
+            await this._loadWithRetry();
             ImageCropController.disable();
         },
 
         /**
-         * 选图 + 预加载：先试今日图片，失败则随机试其他（最多 5 次）
-         * 返回加载成功的 URL，全部失败返回 null
+         * 直接设 posterImage.src 开始加载，失败自动换下一张重试
+         * 不预加载 — 图片边下载边展示，无需等待
          */
-        async _pickAndPreload() {
+        async _loadWithRetry() {
             const todayIdx = this._getTodayPoolIndex();
-            const todayUrl = UNSPLASH_POOL[todayIdx];
 
-            let loaded = await this._preloadImage(todayUrl);
-            if (loaded) {
-                this._saveCache({ url: todayUrl, index: todayIdx, date: this._todayKey() });
-                return todayUrl;
-            }
-
-            // 今日图失败 — 随机挑其他图重试
+            // 候选列表：今日图排第一，其余洗牌后取 3 张
+            const candidates = [{ url: UNSPLASH_POOL[todayIdx], i: todayIdx }];
             const others = UNSPLASH_POOL
                 .map((u, i) => ({ url: u, i }))
                 .filter(item => item.i !== todayIdx);
-
-            // Fisher-Yates 洗牌
             for (let i = others.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [others[i], others[j]] = [others[j], others[i]];
             }
+            candidates.push(...others.slice(0, 3));
 
-            const maxRetries = Math.min(3, others.length);
-            for (let i = 0; i < maxRetries; i++) {
-                loaded = await this._preloadImage(others[i].url);
-                if (loaded) {
-                    this._saveCache({ url: others[i].url, index: others[i].i, date: this._todayKey() });
-                    return others[i].url;
+            for (const c of candidates) {
+                const ok = await this._trySetImage(c.url);
+                if (ok) {
+                    this._saveCache({ url: c.url, index: c.i, date: this._todayKey() });
+                    return;
                 }
             }
+            // 全部失败 — 不设图，CSS 渐变背景自然展示
+        },
 
-            return null;  // 全部失败
+        /**
+         * 设置 img.src 并等待 load / error / 10s 超时
+         * 返回 true 表示加载成功
+         */
+        _trySetImage(url) {
+            return new Promise((resolve) => {
+                if (!dom.posterImage) { resolve(false); return; }
+
+                const done = (ok) => {
+                    clearTimeout(timer);
+                    resolve(ok);
+                };
+
+                dom.posterImage.addEventListener('load',  () => done(true),  { once: true });
+                dom.posterImage.addEventListener('error', () => done(false), { once: true });
+
+                const timer = setTimeout(() => done(false), 10000);
+
+                dom.posterImage.src = url;
+            });
         },
 
         async changeBingImage() {
