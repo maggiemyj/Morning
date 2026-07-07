@@ -73,14 +73,27 @@
         async loadBackground() {
             const uploaded = this._getUploaded();
             if (uploaded) {
-                this._setImage(uploaded);
+                this._setImageNow(uploaded);
                 ImageCropController.enable();       // 上传图片启用拖拽
                 return;
             }
 
             const todayIdx = this._getTodayPoolIndex();
             const url = UNSPLASH_POOL[todayIdx];
-            this._setImage(url);
+
+            // 首次加载：先显示加载提示，预加载完成后再展示图片
+            if (dom.posterImgLoading) dom.posterImgLoading.classList.add('show');
+
+            const loaded = await this._preloadImage(url);
+            if (dom.posterImgLoading) dom.posterImgLoading.classList.remove('show');
+
+            if (loaded) {
+                this._setImageNow(url);
+            } else {
+                // 预加载失败仍然尝试设置（浏览器可能仍能加载）
+                this._setImageNow(url);
+            }
+
             ImageCropController.disable();          // Unsplash 禁用拖拽
             this._saveCache({ url, index: todayIdx, date: this._todayKey() });
         },
@@ -148,12 +161,20 @@
         /* -------- 内部 -------- */
 
         /**
-         * 设置海报图片 — <img> 标签，简单可靠
+         * 设置海报图片（带 loading 半透明过渡 — 用于手动换图）
          */
         _setImage(url) {
             if (!dom.posterImage) return;
             dom.posterImage.classList.add('loading');
             if (dom.posterImgLoading) dom.posterImgLoading.classList.add('show');
+            dom.posterImage.src = url;
+        },
+
+        /**
+         * 直接设置海报图片（无 loading 过渡 — 用于首次加载已预加载完成的图）
+         */
+        _setImageNow(url) {
+            if (!dom.posterImage) return;
             dom.posterImage.src = url;
         },
 
